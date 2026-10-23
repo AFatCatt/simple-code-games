@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Explore the six-game website design draft.">
+  <title>Games | Simple Code Games</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/catalog.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <!-- Shared header: keep this navigation consistent across all four pages. -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html" aria-current="page">Games</a>
+        <a href="help.html">How to play</a>
+        <a href="about.html">About</a>
+      </nav>
+      <button class="profile-button" type="button" data-open-profile aria-haspopup="dialog">Profile: Guest</button>
+    </div>
+  </header>
+  <main id="main-content" class="page-shell">
+    <section class="catalog-intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">The small browser arcade</p><h1 id="page-title">Pick a game.</h1><p class="lead">Six familiar ideas. A quick break from the ordinary.</p></div>
+      <span class="draft-badge"><span aria-hidden="true"></span> Website design draft</span>
+    </section>
+    <p class="preview-note">Explore the menus and game layouts. Playable games and saved progress are coming in a later update.</p>
+    <section class="game-grid" aria-label="Game collection">
+      <!-- Original Doom: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card doom" href="game.html?game=doom" data-game="doom" aria-label="Open Original Doom menu">
+        <div class="card-heading"><h2>Original Doom</h2><span class="game-number" aria-hidden="true">01</span></div>
+        <p class="card-tagline">First-person classic</p>
+        <img class="game-thumbnail" src="assets/images/doom.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+      <!-- Snake: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card snake" href="game.html?game=snake" data-game="snake" aria-label="Open Snake menu">
+        <div class="card-heading"><h2>Snake</h2><span class="game-number" aria-hidden="true">02</span></div>
+        <p class="card-tagline">Collect. Grow. Repeat.</p>
+        <img class="game-thumbnail" src="assets/images/snake.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+      <!-- Pong: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card pong" href="game.html?game=pong" data-game="pong" aria-label="Open Pong menu">
+        <div class="card-heading"><h2>Pong</h2><span class="game-number" aria-hidden="true">03</span></div>
+        <p class="card-tagline">A little friendly competition</p>
+        <img class="game-thumbnail" src="assets/images/pong.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+      <!-- Memory Match: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card memory" href="game.html?game=memory" data-game="memory" aria-label="Open Memory Match menu">
+        <div class="card-heading"><h2>Memory Match</h2><span class="game-number" aria-hidden="true">04</span></div>
+        <p class="card-tagline">Find your perfect pair</p>
+        <img class="game-thumbnail" src="assets/images/memory.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+      <!-- Circle Hop: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card circle-hop" href="game.html?game=circle-hop" data-game="circle-hop" aria-label="Open Circle Hop menu">
+        <div class="card-heading"><h2>Circle Hop</h2><span class="game-number" aria-hidden="true">05</span></div>
+        <p class="card-tagline">One more jump</p>
+        <img class="game-thumbnail" src="assets/images/circle-hop.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+      <!-- Medieval RPS: the link still opens the layout when JavaScript is off. -->
+      <a class="game-card medieval-rps" href="game.html?game=medieval-rps" data-game="medieval-rps" aria-label="Open Medieval RPS menu">
+        <div class="card-heading"><h2>Medieval RPS</h2><span class="game-number" aria-hidden="true">06</span></div>
+        <p class="card-tagline">Five choices. One winner.</p>
+        <img class="game-thumbnail" src="assets/images/medieval-rps.svg" alt="" width="360" height="220">
+        <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
+      </a>
+    </section>
+    <p class="catalog-caption">Preview illustrations are shown here. Actual game screenshots will be added as development continues.</p>
+    <noscript><p class="notice">JavaScript is off. The tiles still link to the game layout; menu and profile previews need JavaScript.</p></noscript>
+  </main>
+
+  <dialog id="game-dialog" aria-labelledby="menu-title">
+    <form method="dialog" class="dialog-close"><button aria-label="Close game menu">×</button></form>
+    <p class="eyebrow">Game menu</p>
+    <h2 id="menu-title">Game title</h2>
+    <p id="menu-description"></p>
+    <p class="menu-status">Layout preview <span>Gameplay coming later</span></p>
+    <div class="menu-actions">
+      <button class="button" disabled>Continue</button>
+      <button class="button" disabled>New game</button>
+      <a class="button primary" id="preview-link" href="game.html">View game layout <span aria-hidden="true">→</span></a>
+      <button class="button" id="show-instructions" type="button" aria-expanded="false" aria-controls="menu-instructions">Instructions</button>
+    </div>
+    <section id="menu-instructions" class="menu-instructions" hidden>
+      <h3>How to play</h3><p id="instructions-text"></p><p><strong>Planned controls:</strong> <span id="controls-text"></span></p>
+    </section>
+    <p class="small muted">Continue will be enabled only when a compatible saved run exists. No games are playable in this milestone.</p>
+  </dialog>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>Simple Code Games <span class="footer-divider">/</span> A student web project</p>
+      <a href="about.html#credits">About and credits <span aria-hidden="true">↗</span></a>
+    </div>
+  </footer>
+
+  <!-- Native dialogs support Escape, keyboard focus, and an accessible title. -->
+  <dialog id="profile-dialog" aria-labelledby="profile-title">
+    <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
+    <p class="eyebrow">Your corner of the arcade</p>
+    <h2 id="profile-title">Local profiles</h2>
+    <p>Separate names and saved progress are planned for a later milestone.</p>
+    <div class="profile-row"><span class="avatar" aria-hidden="true">G</span><div><strong>Guest</strong><br><span class="muted">Current preview profile</span></div><span class="selected-label">Selected</span></div>
+    <label for="profile-name">New profile name</label>
+    <input id="profile-name" type="text" placeholder="Available in a later update" disabled>
+    <button class="button full-width" disabled>Create profile</button>
+    <p class="small muted">This draft does not save names, scores, or game progress. Planned local profiles will stay in the browser where they are created.</p>
+  </dialog>
+</body>
+</html>

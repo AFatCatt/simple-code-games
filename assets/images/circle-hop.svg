@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#fff1d6"/>
+  <text x="24" y="36" font-family="monospace" font-size="16" fill="#585050">SCORE 240</text>
+  <path d="M19 183 H341" stroke="#4a5368" stroke-width="4"/>
+  <circle cx="87" cy="108" r="24" fill="#eba82c" stroke="#966314" stroke-width="3"/>
+  <path d="M180 181 l27 -58 l27 58 Z" fill="#586e96"/>
+  <rect x="287" y="145" width="37" height="36" fill="#ad83b9"/>
+  <path d="M68 152 h18 M76 162 h10" stroke="#e2bd78" stroke-width="3"/>
+  <circle cx="293" cy="61" r="20" fill="#f6e8c7"/>
+</svg>

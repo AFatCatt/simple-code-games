@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Explore the six-game website design draft.">
+  <title>How to play | Simple Code Games</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/catalog.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <!-- Shared header: keep this navigation consistent across all four pages. -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html">Games</a>
+        <a href="help.html" aria-current="page">How to play</a>
+        <a href="about.html">About</a>
+      </nav>
+      <button class="profile-button" type="button" data-open-profile aria-haspopup="dialog">Profile: Guest</button>
+    </div>
+  </header>
+  <main id="main-content" class="page-shell">
+    <p class="eyebrow">A quick guide</p><h1>Find your next game.</h1><p class="lead">The rules are simple. The games are on their way.</p>
+    <section class="content-section reading-width"><h2>Explore this draft</h2><p>Open Games, choose a tile, and select Instructions to see the planned rules. View game layout opens the shared play screen. The Profile button previews the future local profile menu. Disabled play and save buttons show features that are not ready yet.</p><p>Use Tab to move between links and buttons. Press Enter to activate them, and Escape to close a menu.</p></section>
+    <section class="guide-grid" aria-label="Game rules">
+      <article class="guide-item"><h3>Original Doom</h3><p>A browser runtime and permitted game files will be added later. Its instructions and save support will be checked during integration.</p><p class="small"><strong>Planned controls:</strong> Keyboard and mouse</p><a href="game.html?game=doom">View Original Doom layout →</a></article>
+      <article class="guide-item"><h3>Snake</h3><p>Use the arrow keys to change direction. Collect food to earn points. Hitting a wall or your own body ends the run.</p><p class="small"><strong>Planned controls:</strong> Arrow keys</p><a href="game.html?game=snake">View Snake layout →</a></article>
+      <article class="guide-item"><h3>Pong</h3><p>Move your paddle with the Up and Down arrow keys. Return the ball and score when the computer misses. The match target will be set during development.</p><p class="small"><strong>Planned controls:</strong> Up and Down arrows</p><a href="game.html?game=pong">View Pong layout →</a></article>
+      <article class="guide-item"><h3>Memory Match</h3><p>Select two cards to reveal them. Matching cards stay face up; different cards turn back over. Match every pair to finish the board.</p><p class="small"><strong>Planned controls:</strong> Click or tap</p><a href="game.html?game=memory">View Memory Match layout →</a></article>
+      <article class="guide-item"><h3>Circle Hop</h3><p>Press Space or tap the game area to jump. Clear the shapes in your path and keep going to increase your score. Touching an obstacle ends the run.</p><p class="small"><strong>Planned controls:</strong> Space or tap</p><a href="game.html?game=circle-hop">View Circle Hop layout →</a></article>
+      <article class="guide-item"><h3>Medieval RPS</h3><p>Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield.</p><p class="small"><strong>Planned controls:</strong> Click or tap</p><a href="game.html?game=medieval-rps">View Medieval RPS layout →</a></article>
+    </section>
+    <section class="content-section reading-width"><h2>What will be saved later</h2><p>Five original games are planned to use local profiles for supported records and progress. These profiles will stay in the same browser and will not be online accounts. Doom will use the selected runtime's own save features until profile integration has been tested.</p></section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>Simple Code Games <span class="footer-divider">/</span> A student web project</p>
+      <a href="about.html#credits">About and credits <span aria-hidden="true">↗</span></a>
+    </div>
+  </footer>
+
+  <!-- Native dialogs support Escape, keyboard focus, and an accessible title. -->
+  <dialog id="profile-dialog" aria-labelledby="profile-title">
+    <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
+    <p class="eyebrow">Your corner of the arcade</p>
+    <h2 id="profile-title">Local profiles</h2>
+    <p>Separate names and saved progress are planned for a later milestone.</p>
+    <div class="profile-row"><span class="avatar" aria-hidden="true">G</span><div><strong>Guest</strong><br><span class="muted">Current preview profile</span></div><span class="selected-label">Selected</span></div>
+    <label for="profile-name">New profile name</label>
+    <input id="profile-name" type="text" placeholder="Available in a later update" disabled>
+    <button class="button full-width" disabled>Create profile</button>
+    <p class="small muted">This draft does not save names, scores, or game progress. Planned local profiles will stay in the browser where they are created.</p>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#e9e0f5"/>
+  <rect x="31" y="18" width="64" height="53" rx="5" fill="#fffdfa" stroke="#bca6d9"/>
+  <circle cx="63" cy="44" r="15" fill="#f1ae48"/>
+  <rect x="107" y="18" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="139" y="53" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="183" y="18" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="215" y="53" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="259" y="18" width="64" height="53" rx="5" fill="#fffdfa" stroke="#bca6d9"/>
+  <path d="M291 28 l18 32 h-36 Z" fill="#778dc8"/>
+  <rect x="31" y="81" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="63" y="116" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="107" y="81" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="139" y="116" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="183" y="81" width="64" height="53" rx="5" fill="#fffdfa" stroke="#bca6d9"/>
+  <circle cx="215" cy="107" r="15" fill="#f1ae48"/>
+  <rect x="259" y="81" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="291" y="116" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="31" y="144" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="63" y="179" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="107" y="144" width="64" height="53" rx="5" fill="#fffdfa" stroke="#bca6d9"/>
+  <path d="M139 154 l18 32 h-36 Z" fill="#778dc8"/>
+  <rect x="183" y="144" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="215" y="179" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+  <rect x="259" y="144" width="64" height="53" rx="5" fill="#8260af" stroke="#bca6d9"/>
+  <text x="291" y="179" text-anchor="middle" fill="#fff" font-size="26" font-family="monospace">?</text>
+</svg>
