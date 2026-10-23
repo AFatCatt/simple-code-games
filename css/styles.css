@@ -56,17 +56,17 @@ h3 { font-size: 17px; }
 .game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .game-card { --accent: #566783; --title: #304261; aspect-ratio: 1; display: flex; flex-direction: column; padding: 20px 18px 14px; background: var(--white); border: 1px solid var(--line); border-top: 6px solid var(--accent); border-radius: var(--radius); color: var(--ink); text-decoration: none; transition: transform 150ms, box-shadow 150ms; }
 .game-card:hover { transform: translateY(-4px); box-shadow: 0 8px 18px #16233312; }
-.doom { --accent: #cf5542; --title: #a6362b; }
-.snake { --accent: #61a86d; --title: #337242; }
-.pong { --accent: #6684d5; --title: #3c58a3; }
-.memory { --accent: #9270ce; --title: #7450ac; }
-.circle-hop { --accent: #e7a333; --title: #975c11; }
-.medieval-rps { --accent: #ae7954; --title: #8a5735; }
+.doom { --preview-bg: #222b25; --accent: #cf5542; --title: #a6362b; }
+.snake { --preview-bg: #16352e; --accent: #61a86d; --title: #337242; }
+.pong { --preview-bg: #19274d; --accent: #6684d5; --title: #3c58a3; }
+.memory { --preview-bg: #e9e0f5; --accent: #9270ce; --title: #7450ac; }
+.circle-hop { --preview-bg: #fff1d6; --accent: #e7a333; --title: #975c11; }
+.medieval-rps { --preview-bg: #eae1d5; --accent: #ae7954; --title: #8a5735; }
 .card-heading { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .card-heading h2 { color: var(--title); margin: 0; font-size: clamp(19px, 2.2vw, 25px); letter-spacing: -0.6px; }
 .game-number { font: 11px Consolas, monospace; color: #75808a; }
 .card-tagline { font-size: 11px; color: var(--muted); margin: 4px 0 15px; }
-.game-thumbnail { width: 100%; min-height: 0; flex: 1; object-fit: cover; border-radius: 3px; }
+.game-thumbnail { width: 100%; min-height: 0; flex: 1; object-fit: contain; border-radius: 3px; background: var(--preview-bg); }
 .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 1.4px; color: var(--muted); }
 .arrow { font-size: 22px; line-height: 1; }
 .catalog-caption { font-size: 12px; color: var(--muted); margin: 22px 0 0; }
