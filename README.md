@@ -6,6 +6,10 @@ This is the structure and appearance milestone. It is an AI-assisted starter for
 
 ## Open the website
 
+Live draft: https://afatcatt.github.io/simple-code-games/
+
+Source: https://github.com/AFatCatt/simple-code-games
+
 Open `index.html` in a browser, or open this folder in VS Code and run Live Server. No build step or installation is required. Use the same preview URL and port when browser storage is added later.
 
 ## Pages and folders
