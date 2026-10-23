@@ -1,32 +1,158 @@
 /* Only game.html loads this stylesheet. Shared styles remain in styles.css. */
-.back-link { display: inline-block; font-size: 13px; margin-bottom: 28px; text-decoration: none; }
-.game-page-heading { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; margin-bottom: 30px; }
-.game-page-heading .lead { max-width: 650px; }
-.play-layout { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(230px, 1fr); gap: 26px; align-items: start; }
-.play-panel { border: 1px solid var(--line); border-radius: var(--radius); background: white; overflow: hidden; }
-.game-toolbar, .game-bottom-bar { padding: 16px 20px; display: flex; align-items: center; gap: 20px; font-size: 12px; }
-.game-toolbar .button, .game-bottom-bar .button { margin-left: auto; }
-.compact { padding: 7px 14px; font-size: 12px; }
-.game-stage { position: relative; background: var(--navy); min-height: 330px; display: grid; place-items: center; }
-.game-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.2; }
-.stage-message { position: relative; padding: 35px; text-align: center; color: white; max-width: 480px; }
-.stage-message h2 { font-size: 29px; line-height: 1.2; }
-.stage-message p { font-size: 14px; color: #e3e7eb; }
-.stage-message .eyebrow { color: #e3e7eb; font-size: 11px; }
-.game-bottom-bar { color: var(--muted); }
-.instructions-panel { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: white; }
-.instructions-panel h2 { font-size: 23px; }
-.instructions-panel h3 { margin: 24px 0 8px; font-size: 14px; }
-.instructions-panel p { font-size: 14px; }
-.controls-label { display: inline-block; padding: 5px 10px; border: 1px solid var(--line); border-radius: 5px; }
-.text-link { font-size: 13px; }
-@media (max-width: 850px) {
-  .play-layout { grid-template-columns: 1fr; }
-  .game-page-heading { flex-direction: column; gap: 16px; }
+
+.back-link  {
+  display: inline-block;
+  font-size: 13px;
+  margin-bottom: 28px;
+  text-decoration: none;
 }
-@media (max-width: 560px) {
-  .game-toolbar, .game-bottom-bar { padding: 12px; gap: 10px; }
-  .game-stage { min-height: 310px; }
-  .stage-message { padding: 24px; }
-  .stage-message h2 { font-size: 25px; }
+
+.game-page-heading  {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.game-page-heading .lead  {
+  max-width: 650px;
+}
+
+.play-layout  {
+  display: grid;
+  grid-template-columns: minmax(0, 2.3fr) minmax(230px, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.play-panel  {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  overflow: hidden;
+}
+
+.game-toolbar, .game-bottom-bar  {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+}
+
+.game-toolbar .button, .game-bottom-bar .button  {
+  margin-left: auto;
+}
+
+.compact  {
+  padding: 7px 14px;
+  font-size: 12px;
+}
+
+.game-stage  {
+  position: relative;
+  background: var(--navy);
+  min-height: 330px;
+  display: grid;
+  place-items: center;
+}
+
+.game-stage img  {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.2;
+}
+
+.stage-message  {
+  position: relative;
+  padding: 35px;
+  text-align: center;
+  color: white;
+  max-width: 480px;
+}
+
+.stage-message h2  {
+  font-size: 29px;
+  line-height: 1.2;
+}
+
+.stage-message p  {
+  font-size: 14px;
+  color: #e3e7eb;
+}
+
+.stage-message .eyebrow  {
+  color: #e3e7eb;
+  font-size: 11px;
+}
+
+.game-bottom-bar  {
+  color: var(--muted);
+}
+
+.instructions-panel  {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+}
+
+.instructions-panel h2  {
+  font-size: 23px;
+}
+
+.instructions-panel h3  {
+  margin: 24px 0 8px;
+  font-size: 14px;
+}
+
+.instructions-panel p  {
+  font-size: 14px;
+}
+
+.controls-label  {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.text-link  {
+  font-size: 13px;
+}
+
+@media (max-width: 850px)  {
+  .play-layout  {
+    grid-template-columns: 1fr;
+  }
+
+  .game-page-heading  {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+}
+
+@media (max-width: 560px)  {
+  .game-toolbar, .game-bottom-bar  {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .game-stage  {
+    min-height: 310px;
+  }
+
+  .stage-message  {
+    padding: 24px;
+  }
+
+  .stage-message h2  {
+    font-size: 25px;
+  }
+
 }
