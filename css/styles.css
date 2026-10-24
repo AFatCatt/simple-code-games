@@ -127,8 +127,8 @@ h3  {
 
 /* Header and footer shared by all pages */
 
-.site-header  {
-  background: var(--navy);
+.site-header {
+  background: #3b78a6;
   color: white;
 }
 
