@@ -1,5 +1,4 @@
-/* Small interactions for the structure-and-appearance milestone.
-   Game logic, Vue, and saving are intentionally left for later work. */
+
 
 // Native dialogs keep focus inside the menu and support the Escape key.
 const profileDialog = document.querySelector("#profile-dialog");
