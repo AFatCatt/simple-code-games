@@ -22,6 +22,13 @@ if (selectedGame) {
     document.querySelector("#save-note").textContent =
       "The future Doom runtime will manage its own saves. Profile-specific loading has not been tested or added.";
   }
+   //Snake
+  if (selectedGameId === "snake"){
+    const snakeContainer = document.querySelector("#snake-container");
+      snakeContainer.hidden = false;
+      loadSnakeGame(snakeContainer);
+  } 
+   //snake
 } else if (selectedGameId) {
   document.querySelector("#game-title").textContent = "Game not found";
   document.querySelector("#game-description").textContent =
