@@ -23,10 +23,10 @@ if (selectedGame) {
       "The future Doom runtime will manage its own saves. Profile-specific loading has not been tested or added.";
   }
    //Snake
-  if (selectedGameId === "snake"){
-    const snakeContainer = document.querySelector("#snake-container");
-      snakeContainer.hidden = false;
-      loadSnakeGame(snakeContainer);
+  // if (selectedGameId === "snake"){
+   //  const snakeContainer = document.querySelector("#snake-container");
+     //  snakeContainer.hidden = false;
+     //  loadSnakeGame(snakeContainer);
   } 
    //snake
 } else if (selectedGameId) {
