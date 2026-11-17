@@ -27,7 +27,7 @@ if (selectedGame) {
    //  const snakeContainer = document.querySelector("#snake-container");
      //  snakeContainer.hidden = false;
      //  loadSnakeGame(snakeContainer);
-  } 
+  //} 
    //snake
 } else if (selectedGameId) {
   document.querySelector("#game-title").textContent = "Game not found";
