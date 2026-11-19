@@ -29,6 +29,27 @@ if (gameDialog) {
       document.querySelector("#instructions-text").textContent = game.instructions;
       document.querySelector("#controls-text").textContent = game.controls;
       document.querySelector("#preview-link").href = "game.html?game=" + gameId;
+      // Enable New game for Medieval RPS.
+const rpsReady = gameId === "medieval-rps";
+const newGameButton = document.querySelector("#new-game-button");
+const previewLink = document.querySelector("#preview-link");
+
+newGameButton.disabled = !rpsReady;
+
+newGameButton.onclick = function () {
+  window.location.href = "game.html?game=" + gameId;
+};
+
+// RPS opens through New game. Unfinished games still show their previews.
+previewLink.style.display = rpsReady ? "none" : "";
+
+gameDialog.querySelector(".menu-status").textContent =
+  rpsReady ? "Ready to play" : "Gameplay coming later";
+
+gameDialog.querySelector(".small.muted").textContent =
+  rpsReady
+    ? "Start a fresh game. Scores are kept for this visit only."
+    : "This game is still in development.";
       instructionsPanel.hidden = true;
       instructionsButton.setAttribute("aria-expanded", "false");
       gameDialog.showModal();

@@ -34,3 +34,36 @@ if (selectedGame) {
   document.querySelector("#game-description").textContent =
     "That game is not in this collection. Use All games to choose one of the six planned titles.";
 }
+// Start Medieval RPS when that game is selected.
+if (selectedGameId === "medieval-rps") {
+  const gameArea = document.querySelector(".game-stage");
+  loadMedievalRPS(gameArea);
+
+  // Update the old preview labels.
+  document.querySelector(".game-page-heading .eyebrow").textContent =
+    "Choose your champion";
+
+  document.querySelector(".draft-badge").textContent = "Ready to play";
+
+  document.querySelector("#save-note").textContent =
+    "Scores are kept for this visit only. Refreshing resets them.";
+
+  document.querySelector(".instructions-panel h3").textContent =
+    "Controls";
+
+  // Hide the unused preview score and Pause controls.
+  document.querySelector(".game-toolbar").style.display = "none";
+
+  document.querySelector(".game-bottom-bar span").textContent =
+    "Choose again to play another round.";
+
+  // Make the bottom New game button reset the scores.
+  const restartButton = document.querySelector(".game-bottom-bar button");
+  restartButton.disabled = false;
+
+  restartButton.onclick = function () {
+    if (window.confirm("Start a new game and reset your scores?")) {
+      loadMedievalRPS(gameArea);
+    }
+  };
+}

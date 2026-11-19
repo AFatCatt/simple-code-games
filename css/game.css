@@ -156,3 +156,74 @@
   }
 
 }
+/* Medieval RPS game area */
+.rps-stage {
+  padding: 32px 24px;
+  background: linear-gradient(#f7f0e3, #e9dcc5);
+  color: #39291e;
+  text-align: center;
+}
+
+.rps-stage h2 {
+  margin: 0 0 24px;
+  font-size: 28px;
+}
+
+/* Arrange the choices into columns that fit the screen. */
+#rps-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+#rps-choices .button {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+  padding: 18px 10px;
+  background: #fffaf0;
+  color: #49321f;
+  border: 2px solid #b89b76;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#rps-choices .button:hover {
+  background: #f1dfbd;
+  border-color: #795532;
+}
+
+#rps-choices .button:focus-visible {
+  outline: 3px solid #245d89;
+  outline-offset: 3px;
+}
+
+.rps-symbol {
+  font-size: 38px;
+  line-height: 1;
+}
+
+/* Keep the round result easy to notice. */
+#rps-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  padding: 20px;
+  margin: 0 0 20px;
+  background: #49321f;
+  color: #fffaf0;
+  border-radius: 10px;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+#rps-score,
+#rps-streak {
+  margin: 12px 0;
+  font-weight: bold;
+  line-height: 1.6;
+}
