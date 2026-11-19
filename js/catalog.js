@@ -17,10 +17,10 @@ const gameCatalog = {
     "playable": true,
     "leaderboardMetric": "High score",
     "leaderboardOrder": "desc",
-    "description": "Collect food, grow your snake, wrap around the edges, and avoid your own body.",
+    "description": "Eat apples, wrap around the edges, and collect black bombs to trim your tail.",
     "controls": "Arrow keys",
-    "instructions": "Use the arrow keys to change direction. Collect food to earn points. Crossing an edge brings you back on the opposite side in the same row or column. Hitting your own body ends the run.",
-    "image": "assets/images/snake.svg"
+    "instructions": "Use the arrow keys to move and wrap across edges. Each apple earns one point. A black bomb appears after every 10th apple and trims 1–5 tail squares, keeping at least three. Eat the next apple first and that bomb disappears until the next 10th apple. Bombs keep your earned points. Hitting your body ends the run.",
+    "image": "assets/images/snake.png"
   },
   "pong": {
     "title": "Pong",
@@ -41,10 +41,10 @@ const gameCatalog = {
     "playable": true,
     "leaderboardMetric": "High score",
     "leaderboardOrder": "desc",
-    "description": "Time each jump to carry your circle over the next obstacle.",
+    "description": "Jump over rectangles, triangles, circles and diamonds as the pace increases.",
     "controls": "Space, Up arrow or tap",
-    "instructions": "Press Space or tap the game area to jump. Clear the shapes in your path and keep going to increase your score. Touching an obstacle ends the run.",
-    "image": "assets/images/circle-hop.svg"
+    "instructions": "Press Space, Up arrow or tap the board to jump over rectangles, triangles, circles and diamonds. The game gets slightly faster every 100 points. Touching the visible shape ends the run.",
+    "image": "assets/images/circle-hop.png"
   },
   "medieval-rps": {
     "title": "Medieval RPS",

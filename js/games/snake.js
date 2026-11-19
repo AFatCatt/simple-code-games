@@ -1,3 +1,4 @@
+/* Bombs / obstacle variety and milestone speed update, 2026-11-19. */
 /* Gameplay by Victoria Mason. Profile/save integration and edge-case fixes added 2026-11-19. */
 
 function loadSnakeGame(container, startImmediately = false, options = {}) {
@@ -18,6 +19,7 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
 
   let snake = [];
   let food = null;
+  let bomb = null;
   let dx = box;
   let dy = 0;
   let score = 0;
@@ -34,10 +36,14 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
     }
   }
 
-  function updateScore() {
+  function updateScore(note = "") {
     if (scoreDisplay) {
-      scoreDisplay.textContent = "Score: " + score;
+      scoreDisplay.textContent = "Score: " + score + " | Length: " + snake.length;
     }
+    const bombNote = container.querySelector("#snake-bomb-note");
+    if (bombNote) bombNote.textContent = note + (bomb
+      ? "Black bomb active: trims 1–5 tail squares. Eat the apple first to clear it."
+      : "Next bomb after apple " + ((Math.floor(score / 10) + 1) * 10) + ".");
   }
 
   function createFood() {
@@ -47,6 +53,16 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
       if (!snake.some(segment => segment.x === x && segment.y === y)) free.push({ x, y });
     }
     food = free.length ? free[Math.floor(Math.random() * free.length)] : null;
+  }
+
+  function createBomb() {
+    const free = [];
+    for (let y = 0; y < size; y += box) for (let x = 0; x < size; x += box) {
+      if (!snake.some(segment => segment.x === x && segment.y === y) &&
+          !(food && food.x === x && food.y === y)) free.push({ x, y });
+    }
+    // A nearly full board can leave only the apple cell. Never replace it with a bomb.
+    bomb = free.length ? free[Math.floor(Math.random() * free.length)] : null;
   }
 
   function drawBoard() {
@@ -74,8 +90,22 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
   function draw() {
     drawBoard();
 
-    context.fillStyle = "#f59e0b";
-    if (food) context.fillRect(food.x, food.y, box, box);
+    if (food) {
+      const x = food.x + 10, y = food.y + 11;
+      context.fillStyle = "#ef4444";
+      context.beginPath(); context.arc(x - 2, y, 6, 0, Math.PI * 2);
+      context.arc(x + 2, y, 6, 0, Math.PI * 2); context.fill();
+      context.strokeStyle = "#86efac"; context.lineWidth = 2;
+      context.beginPath(); context.moveTo(x, y - 5); context.lineTo(x + 3, y - 9); context.stroke();
+    }
+    if (bomb) {
+      const x = bomb.x + 10, y = bomb.y + 11;
+      context.fillStyle = "#050505"; context.strokeStyle = "#cbd5e1"; context.lineWidth = 1.5;
+      context.beginPath(); context.arc(x, y, 7, 0, Math.PI * 2); context.fill(); context.stroke();
+      context.strokeStyle = "#fbbf24"; context.lineWidth = 2;
+      context.beginPath(); context.moveTo(x + 2, y - 7); context.lineTo(x + 5, y - 10); context.stroke();
+    }
+    context.lineWidth = 1;
 
     snake.forEach((segment, index) => {
       context.fillStyle = index === 0 ? "#34d399" : "#a7f3d0";
@@ -133,11 +163,20 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
 
     if (ateFood) {
       score += 1;
-      updateScore();
+      bomb = null; // Taking the apple clears any uneaten bomb.
       createFood();
+      if (score % 10 === 0 && food) createBomb();
+      updateScore();
       if (!food) { draw(); endGame(true); return; }
     } else {
       snake.pop();
+      if (bomb && head.x === bomb.x && head.y === bomb.y) {
+        const removed = Math.min(1 + Math.floor(Math.random() * 5), snake.length - 3);
+        snake.splice(snake.length - removed, removed);
+        bomb = null;
+        // Score counts apples, so shortening the tail never subtracts earned points.
+        updateScore("Bomb trimmed " + removed + " tail square" + (removed === 1 ? "" : "s") + ". ");
+      }
     }
 
     draw();
@@ -157,6 +196,7 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
     dx = box;
     dy = 0;
     score = 0;
+    bomb = null;
     outcome = null; turnPending = false;
     updateScore();
     running = true;
@@ -242,18 +282,19 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
 
   document.addEventListener("keydown", handleKey);
 
-  updateScore();
   snake = [
     { x: 5 * box, y: 5 * box },
     { x: 4 * box, y: 5 * box },
     { x: 3 * box, y: 5 * box },
   ];
+  updateScore();
   createFood();
   draw();
   if (options.initialState) {
     const saved = options.initialState;
     snake = saved.snake.map(segment => ({ ...segment }));
     food = saved.food ? { ...saved.food } : null;
+    bomb = saved.version >= 2 && saved.bomb ? { ...saved.bomb } : null;
     dx = saved.dx; dy = saved.dy; score = saved.score; turnPending = Boolean(saved.turnPending);
     outcome = ["over", "won"].includes(saved.phase) ? saved.phase : null;
     running = ["playing", "paused"].includes(saved.phase); paused = running;
@@ -267,7 +308,8 @@ function loadSnakeGame(container, startImmediately = false, options = {}) {
   else { if (message) message.textContent = "Press Start game to begin. Use the arrow keys to move."; setGameState("ready"); }
 
   function getState() {
-    return { version: 1, game: "snake", snake: snake.map(segment => ({ ...segment })), food: food ? { ...food } : null,
+    return { version: 2, game: "snake", snake: snake.map(segment => ({ ...segment })), food: food ? { ...food } : null,
+      bomb: bomb ? { ...bomb } : null,
       dx, dy, score, turnPending, phase: outcome || (running ? (paused ? "paused" : "playing") : "ready") };
   }
 

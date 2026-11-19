@@ -1,25 +1,29 @@
 /* Connect Victoria's canvas games to the shared profile database. */
 const CanvasSaves = {
   valid(id, s) {
-    if (!s || s.version !== 1 || s.game !== id) return false;
+    if (!s || ![1, 2].includes(s.version) || s.game !== id) return false;
     const number = (v, low, high) => Number.isFinite(v) && v >= low && v <= high;
     if (id === "snake") {
       const cell = p => p && Number.isInteger(p.x) && Number.isInteger(p.y) &&
         p.x >= 0 && p.x < 400 && p.y >= 0 && p.y < 400 && p.x % 20 === 0 && p.y % 20 === 0;
       if (!["ready", "playing", "paused", "over", "won"].includes(s.phase) ||
           !Array.isArray(s.snake) || s.snake.length < 3 || s.snake.length > 400 || !s.snake.every(cell) ||
-          !Number.isInteger(s.score) || s.score !== s.snake.length - 3 ||
+          !Number.isSafeInteger(s.score) || s.score < s.snake.length - 3 ||
+          (s.version === 1 && s.score !== s.snake.length - 3) ||
           ![[20,0],[-20,0],[0,20],[0,-20]].some(([x,y]) => s.dx === x && s.dy === y)) return false;
       const occupied = new Set(s.snake.map(p => p.x + ":" + p.y));
-      return occupied.size === s.snake.length && (s.food === null ? s.snake.length === 400 : cell(s.food) && !occupied.has(s.food.x + ":" + s.food.y));
+      const validBomb = s.version === 1 || s.bomb === null || (cell(s.bomb) && s.score > 0 && s.score % 10 === 0 &&
+        !occupied.has(s.bomb.x + ":" + s.bomb.y) && s.food && (s.bomb.x !== s.food.x || s.bomb.y !== s.food.y));
+      return validBomb && occupied.size === s.snake.length && (s.food === null ? s.snake.length === 400 : cell(s.food) && !occupied.has(s.food.x + ":" + s.food.y));
     }
     if (id === "circle-hop") {
       return ["ready", "playing", "paused", "over"].includes(s.phase) && number(s.score, 0, 1e9) &&
-        number(s.speed, 220, 360) && number(s.spawnCountdown, -0.1, 1.81) &&
+        (s.version === 1 ? number(s.speed, 220, 360) : s.speed === 220 + Math.floor(s.score / 100) * 12) && number(s.spawnCountdown, -0.1, 1.81) &&
         number(s.playerY, 0, 308) && number(s.velocityY, -520, 1000) &&
         Array.isArray(s.obstacles) && s.obstacles.length <= 16 && s.obstacles.every(o => o &&
-          number(o.width, 18, 32) && number(o.height, 24, 56) && number(o.x, -32, 640) &&
-          number(o.y, 269, 301) && Math.abs(o.y + o.height - 325) < 0.001);
+          number(o.width, 18, s.version === 1 ? 32 : 50) && number(o.height, 24, 56) && number(o.x, -o.width, 640) &&
+          number(o.y, 269, 301) && Math.abs(o.y + o.height - 325) < 0.001 &&
+          (s.version === 1 || (["rectangle", "triangle", "circle", "diamond"].includes(o.shape) && (o.shape !== "circle" || o.width === o.height))));
     }
     return false;
   }
@@ -37,6 +41,7 @@ function loadCanvasGame(container, id, options = {}) {
     <button id="pause-button" class="button compact" type="button" disabled>Pause</button>
     <button id="new-game-button" class="button compact" type="button">Start game</button></div>
     <canvas id="game-canvas" width="${snake ? 400 : 640}" height="${snake ? 400 : 360}" tabindex="0" aria-label="${gameCatalog[id].title} game board"></canvas>
+    ${snake ? '<p id="snake-bomb-note" class="small" role="status"></p>' : ''}
     <div id="stage-message" class="canvas-message" role="status"><strong id="announcement"></strong><p id="stage-copy"></p></div>
     <p id="game-state" class="small">Game state: ready</p>
     <p id="canvas-save-status" class="small" role="status"></p>

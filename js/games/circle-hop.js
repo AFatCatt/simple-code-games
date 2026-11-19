@@ -1,3 +1,4 @@
+/* Bombs / obstacle variety and milestone speed update, 2026-11-19. */
 /* Gameplay by Victoria Mason. Profile/save integration added 2026-11-19. */
 window.loadCircleHopGame = function (container, startImmediately = false, options = {}) {
   // Resolve the shared page elements once so the animation loop can update them.
@@ -29,6 +30,17 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
   let previousTime = 0;
   let animationId = null;
 
+  const speedForScore = value => 220 + Math.floor(value / 100) * 12;
+  function updateScore() {
+    if (scoreDisplay) scoreDisplay.textContent = "Score: " + Math.floor(score) + " | Level: " + (Math.floor(score / 100) + 1);
+  }
+  function pointsFor(obstacle) {
+    const { x, y, width: w, height: h } = obstacle;
+    if (obstacle.shape === "triangle") return [[x + w / 2, y], [x + w, y + h], [x, y + h]];
+    if (obstacle.shape === "diamond") return [[x + w / 2, y], [x + w, y + h / 2], [x + w / 2, y + h], [x, y + h / 2]];
+    return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+  }
+
   // Update the visible state and make Pause available only while it can be used.
   function setState(nextState) {
     state = nextState;
@@ -46,9 +58,16 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
     context.fillStyle = "#dce6ee";
     context.fillRect(0, groundY, canvas.width, 3);
 
-    context.fillStyle = "#f59e0b";
     obstacles.forEach((obstacle) => {
-      context.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+      context.fillStyle = { rectangle: "#f59e0b", triangle: "#a78bfa", circle: "#fb7185", diamond: "#38bdf8" }[obstacle.shape];
+      context.beginPath();
+      if (obstacle.shape === "circle") {
+        context.arc(obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height / 2, obstacle.width / 2, 0, Math.PI * 2);
+      } else {
+        pointsFor(obstacle).forEach(([x, y], index) => index ? context.lineTo(x, y) : context.moveTo(x, y));
+        context.closePath();
+      }
+      context.fill();
     });
 
     context.beginPath();
@@ -73,7 +92,7 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
     previousTime = 0;
     player.y = groundY - player.radius;
     player.velocityY = 0;
-    if (scoreDisplay) scoreDisplay.textContent = "Score: 0";
+    updateScore();
     if (stageMessage) stageMessage.hidden = true;
     setState("playing");
     animationId = requestAnimationFrame(loop);
@@ -97,29 +116,39 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
   }
 
   function collides(obstacle) {
-    // Find the closest point on the obstacle rectangle to the circle's center.
-    const closestX = Math.max(obstacle.x, Math.min(player.x, obstacle.x + obstacle.width));
-    const closestY = Math.max(obstacle.y, Math.min(player.y, groundY));
-    const offsetX = player.x - closestX;
-    const offsetY = player.y - closestY;
-    return offsetX * offsetX + offsetY * offsetY < player.radius * player.radius;
+    if (obstacle.shape === "circle") {
+      const dx = player.x - (obstacle.x + obstacle.width / 2);
+      const dy = player.y - (obstacle.y + obstacle.height / 2);
+      return dx * dx + dy * dy < (player.radius + obstacle.width / 2) ** 2;
+    }
+    // Check the real polygon edges, including triangle/diamond slopes.
+    const vertices = pointsFor(obstacle);
+    let positive = false, negative = false;
+    for (let i = 0; i < vertices.length; i++) {
+      const [ax, ay] = vertices[i], [bx, by] = vertices[(i + 1) % vertices.length];
+      const dx = bx - ax, dy = by - ay;
+      const cross = dx * (player.y - ay) - dy * (player.x - ax);
+      positive ||= cross > 0; negative ||= cross < 0;
+      const t = Math.max(0, Math.min(1, ((player.x - ax) * dx + (player.y - ay) * dy) / (dx * dx + dy * dy)));
+      if ((player.x - ax - t * dx) ** 2 + (player.y - ay - t * dy) ** 2 < player.radius ** 2) return true;
+    }
+    return !(positive && negative); // The player's center is inside the polygon.
   }
 
-  function loop(timestamp) {
-    if (state !== "playing") return;
-    // Time-based movement keeps the game speed consistent across display refresh rates.
-    const delta = previousTime ? Math.min((timestamp - previousTime) / 1000, 0.05) : 0;
-    previousTime = timestamp;
-
+  function advance(delta) {
     player.velocityY += 1500 * delta;
     player.y = Math.min(player.y + player.velocityY * delta, groundY - player.radius);
     if (player.y === groundY - player.radius) player.velocityY = 0;
 
     spawnCountdown -= delta;
     if (spawnCountdown <= 0) {
-      const height = 24 + Math.random() * 32;
-      const width = 18 + Math.random() * 14;
+      const shape = ["rectangle", "triangle", "circle", "diamond"][Math.floor(Math.random() * 4)];
+      let height = 24 + Math.random() * 32, width = 18 + Math.random() * 14;
+      if (shape === "triangle") { width = 30 + Math.random() * 20; height = 32 + Math.random() * 24; }
+      if (shape === "circle") width = height = 28 + Math.random() * 16;
+      if (shape === "diamond") { width = 28 + Math.random() * 16; height = 36 + Math.random() * 20; }
       obstacles.push({
+        shape,
         x: canvas.width,
         y: groundY - height,
         width,
@@ -134,13 +163,22 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
     obstacles = obstacles.filter((obstacle) => obstacle.x + obstacle.width > 0);
 
     score += delta * 10;
-    speed = Math.min(360, 220 + score * 1.5);
-    if (scoreDisplay) scoreDisplay.textContent = "Score: " + Math.floor(score);
+    speed = speedForScore(score);
 
     if (obstacles.some(collides)) {
       endGame();
     }
+  }
 
+  function loop(timestamp) {
+    if (state !== "playing") return;
+    const delta = previousTime ? Math.min((timestamp - previousTime) / 1000, 0.05) : 0;
+    previousTime = timestamp;
+    // Small physics steps prevent fast obstacles from passing through the player between frames.
+    const steps = Math.max(1, Math.ceil(Math.max(speed, 520) * delta / 8));
+    for (let i = 0; i < steps && state === "playing"; i++) advance(delta / steps);
+
+    updateScore();
     draw();
     options.onChange?.(false);
     if (state === "playing") animationId = requestAnimationFrame(loop);
@@ -184,16 +222,16 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
   canvas.addEventListener("click", handleCanvasClick);
   document.addEventListener("keydown", handleKeyDown);
 
-  if (scoreDisplay) scoreDisplay.textContent = "Score: 0";
+  updateScore();
   showMessage("Press New game to start.", "Jump with Space, Up arrow, or a click/tap on the game board.");
   setState("ready");
   draw();
   if (options.initialState) {
     const saved = options.initialState;
-    score = saved.score; speed = saved.speed; spawnCountdown = saved.spawnCountdown;
+    score = saved.score; speed = speedForScore(score); spawnCountdown = saved.spawnCountdown;
     player.y = saved.playerY; player.velocityY = saved.velocityY;
-    obstacles = saved.obstacles.map(obstacle => ({ ...obstacle }));
-    if (scoreDisplay) scoreDisplay.textContent = "Score: " + Math.floor(score);
+    obstacles = saved.obstacles.map(obstacle => ({ ...obstacle, shape: obstacle.shape || "rectangle" }));
+    updateScore();
     setState(["playing", "paused"].includes(saved.phase) ? "paused" : saved.phase);
     showMessage(state === "over" ? "Saved game finished" : "Saved game restored",
       state === "paused" ? "Click Resume when ready." : "Press New game to play.");
@@ -202,7 +240,7 @@ window.loadCircleHopGame = function (container, startImmediately = false, option
   } else if (startImmediately) startGame();
 
   function getState() {
-    return { version: 1, game: "circle-hop", phase: state, score, speed, spawnCountdown,
+    return { version: 2, game: "circle-hop", phase: state, score, speed, spawnCountdown,
       playerY: player.y, velocityY: player.velocityY, obstacles: obstacles.map(obstacle => ({ ...obstacle })) };
   }
 
