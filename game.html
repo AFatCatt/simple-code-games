@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="css/game.css">
   <script src="js/catalog.js" defer></script>
   <script src="js/app.js" defer></script>
-  <script src="js/game-loader.js" defer></script>
+  <script src="js/games/snake.js?v=3" defer></script>
+  <script src="js/games/circle-hop.js?v=2" defer></script>
+  <script src="js/game-loader.js?v=4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -31,15 +33,17 @@
     <div class="game-page-heading"><div><p class="eyebrow">Shared game layout</p><h1 id="game-title">Choose a game</h1><p id="game-description" class="lead">Select a title from the Games page to preview its layout.</p></div><span class="draft-badge">Layout preview</span></div>
     <div id="game-layout" class="play-layout" hidden>
       <section class="play-panel" aria-labelledby="game-title">
-        <div class="game-toolbar"><span>Profile: <strong>Guest</strong></span><span>Score: <strong>--</strong></span><button class="button compact" disabled>Pause</button></div>
+        <div class="game-toolbar"><span>Profile: <strong>Guest</strong></span><span>Score: <strong id="score-display">--</strong></span><button class="button compact" id="pause-button" type="button" disabled>Pause</button></div>
         <div class="game-stage">
           <img id="stage-preview" src="assets/images/snake.svg" width="360" height="220" alt="">
-          <div class="stage-message"><span class="eyebrow">In development</span><h2>Your next game starts here.</h2><p>This is the planned play area. The game engine has not been added yet.</p></div>
+          <canvas id="game-canvas" width="400" height="400" aria-label="Snake game board" hidden></canvas>
+          <div class="stage-message" id="stage-message">
+            <span class="eyebrow">In development</span>
+            <h2 id="announcement">Your next game starts here.</h2>
+            <p id="stage-copy">This is the planned play area. The game engine has not been added yet.</p>
+          </div>
         </div>
-        <div class="game-bottom-bar">
-          <span>Game state: Preview</span><button class="button compact" disabled>
-            New game</button>
-        </div>
+        <div class="game-bottom-bar"><span id="game-state">Game state: preview only</span><button class="button compact" id="new-game-button" type="button">New game</button></div>
       </section>
       <aside class="instructions-panel" aria-labelledby="rules-title">
         <p class="eyebrow">Before you start</p><h2 id="rules-title">How to play</h2><p id="game-instructions"></p>
@@ -66,7 +70,7 @@
     <div class="profile-row"><span class="avatar" aria-hidden="true">G</span><div><strong>Guest</strong><br><span class="muted">Current preview profile</span></div><span class="selected-label">Selected</span></div>
     <label for="profile-name">New profile name</label>
     <input id="profile-name" type="text" placeholder="Available in a later update" disabled>
-    <button class="button full-width" disable>Create profile</button>
+    <button class="button full-width" disabled>Create profile</button>
     <p class="small muted">This draft does not save names, scores, or game progress. Planned local profiles will stay in the browser where they are created.</p>
   </dialog>
 </body>
