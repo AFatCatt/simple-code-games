@@ -3,24 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with local profiles, saves, and leaderboards.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>Game layout | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/profiles.css">
+  <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
+  <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
   <link rel="stylesheet" href="css/game.css">
   <link rel="stylesheet" href="css/doom.css">
   <link rel="stylesheet" href="css/canvas-games.css">
   <script src="js/catalog.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/storage.js" defer></script>
-  <script src="js/profiles.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
+  <script src="js/online-config.js?v=online-20261119" defer></script>
+  <script src="js/online.js?v=cleanup-20261119" defer></script>
+  <script src="js/storage.js?v=cleanup-20261119" defer></script>
+  <script src="js/profiles.js?v=cleanup-20261119" defer></script>
+  <script src="js/app.js?v=cleanup-20261119" defer></script>
   <script src="js/games/medieval-rps.js" defer></script>
   <script src="js/games/doom.js" defer></script>
   <script src="js/games/snake.js?v=bombs-shapes-20261119" defer></script>
   <script src="js/games/circle-hop.js?v=bombs-shapes-20261119" defer></script>
   <script src="js/game-session.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/game-loader.js" defer></script>
+  <script src="js/game-loader.js?v=online-20261119" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -44,7 +47,7 @@
       <section class="play-panel" aria-labelledby="game-title">
         <div class="game-toolbar"><span>Profile: <strong>Guest</strong></span><span>Score: <strong>--</strong></span><button class="button compact" disabled>Pause</button></div>
         <div class="game-stage">
-          <img id="stage-preview" src="assets/images/snake.svg" width="360" height="220" alt="">
+          <img id="stage-preview" src="assets/images/snake.png" width="360" height="220" alt="">
           <div class="stage-message"><span class="eyebrow">In development</span><h2>Your next game starts here.</h2><p>This is the planned play area. The game engine has not been added yet.</p></div>
         </div>
         <div class="game-bottom-bar"><span>Game state: preview only</span><button class="button compact" disabled>New game</button></div>

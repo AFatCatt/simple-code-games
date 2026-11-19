@@ -38,7 +38,7 @@ Each profile's existing database record for `doom` stores one base64-encoded nat
 
 Autosave runs every 10 seconds while the player is alive in a level. Save game, normal site navigation, and profile switching also save. Death/intermission do not replace the last living checkpoint. New game replaces the checkpoint after confirmation, and the database keeps the best leaderboard score. Wait for Saved before closing the tab.
 
-Doom's leaderboard score is the most monsters defeated in one level. New runs use Hurt Me Plenty, with the original Episode 1 maps. Profile and leaderboard data remain local to the browser and site address. They are not a server-backed competitive ranking.
+Doom's leaderboard score is the most monsters defeated in one level. New runs use Hurt Me Plenty, with the original Episode 1 maps. Profiles and best scores are now shared online through Supabase. Doom checkpoints remain local to the browser and site address. Scores are reported by the browser; this is not a cheat-proof competitive ranking.
 
 ## Rebuild the engine
 

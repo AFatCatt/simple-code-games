@@ -1,75 +1,94 @@
-/* One local database. Each profile/game pair has ONE save and a separate best. */
+/* One local checkpoint per ONLINE account/game. Best scores sync to Supabase. */
 const ArcadeStorage = (() => {
-  const KEY = "simple-code-games:database:v1";
-  const LOCK = "simple-code-games:database-lock";
-  const empty = () => ({ version: 1, profiles: [], games: {} });
-
-  function read() {
-    let text;
-    try { text = localStorage.getItem(KEY); }
-    catch { throw new Error("Browser storage is blocked. Allow site storage to use profiles and saves."); }
-    if (!text) return empty();
-    try {
-      const db = JSON.parse(text);
-      const hex = (value, size) => typeof value === "string" && new RegExp(`^[a-f0-9]{${size}}$`).test(value);
-      if (!db || db.version !== 1 || !Array.isArray(db.profiles) ||
-          !db.games || typeof db.games !== "object" || Array.isArray(db.games) ||
-          !db.profiles.every(p => p && typeof p.id === "string" && /^[a-zA-Z0-9-]+$/.test(p.id) &&
-            typeof p.username === "string" && /^[A-Za-z0-9_]{3,20}$/.test(p.username) &&
-            p.usernameKey === p.username.toLowerCase() && p.iterations === 600000 &&
-            hex(p.salt, 32) && hex(p.hash, 64)) ||
-          new Set(db.profiles.map(p => p.id)).size !== db.profiles.length ||
-          new Set(db.profiles.map(p => p.usernameKey)).size !== db.profiles.length) throw new Error();
-      return db;
-    } catch { throw new Error("Saved arcade data is damaged or incompatible. It has been left untouched."); }
+  const KEY = "simple-code-games:online-saves:v1", LOCK = KEY + ":lock";
+  const empty = () => ({ version: 1, games: {} });
+  let pendingSync = null, syncTimer = null;
+  function validRecord(r) {
+    return r && r.version === 1 && Number.isSafeInteger(r.revision) && r.revision >= 1 &&
+      (r.best === null || (Number.isSafeInteger(r.best) && r.best >= 0 && r.best <= 1e9));
   }
-
+  function read() {
+    let raw;
+    try { raw = localStorage.getItem(KEY); }
+    catch { throw new Error("Browser storage is blocked. Allow it to save game progress."); }
+    if (!raw) return empty();
+    try {
+      const db = JSON.parse(raw);
+      if (db.version !== 1 || !db.games || typeof db.games !== "object" || Array.isArray(db.games) || !Object.values(db.games).every(validRecord)) throw new Error();
+      return db;
+    } catch { throw new Error("Saved game data is damaged. It has been left untouched."); }
+  }
   async function update(change) {
-    if (location.protocol === "file:" || !navigator.locks) {
-      throw new Error("Open the site with Live Server or GitHub Pages to use profiles and saves.");
-    }
-    // A browser lock prevents two tabs from creating the same username together.
+    if (location.protocol === "file:" || !navigator.locks) throw new Error("Use Live Server or the HTTPS website to save games.");
     return navigator.locks.request(LOCK, () => {
-      const db = read();
-      const result = change(db);
-      try { localStorage.setItem(KEY, JSON.stringify(db)); }
+      const db = read(), result = change(db);
+      try { localStorage.setItem(KEY,JSON.stringify(db)); }
       catch { throw new Error("Saving failed because browser storage is blocked or full. Keep this page open."); }
       window.dispatchEvent(new Event("arcadedatachange"));
       return result;
     });
   }
-
-  function gameKey(profileId, gameId) {
-    if (!Object.hasOwn(gameCatalog, gameId)) throw new Error("Unknown game.");
+  function gameKey(profileId,gameId) {
+    if (!Object.hasOwn(gameCatalog,gameId)) throw new Error("Unknown game.");
     return profileId + ":" + gameId;
   }
-  function getRecord(profileId, gameId) {
-    const record = read().games[gameKey(profileId, gameId)];
-    if (!record) return null;
-    if (record.version !== 1 || !Number.isSafeInteger(record.revision) || record.revision < 1 ||
-        !(record.best === null || (Number.isFinite(record.best) && record.best >= 0))) {
-      throw new Error("This game's saved record is damaged. It has been left untouched.");
-    }
-    return record;
+  function getRecord(profileId,gameId) { return read().games[gameKey(profileId,gameId)] || null; }
+  function syncSoon() {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => flushScores().catch(() => {}),1000);
   }
-
-  async function saveGame(profileId, gameId, state, score, expectedRevision) {
-    const key = gameKey(profileId, gameId);
-    return update(db => {
-      if (!db.profiles.some(p => p.id === profileId)) throw new Error("Profile not found. Sign in again.");
+  async function saveGame(profileId,gameId,state,score,expectedRevision) {
+    if (Profiles.active()?.id !== profileId) throw new Error("The active profile changed. Reload before playing again.");
+    const key = gameKey(profileId,gameId);
+    const revision = await update(db => {
       const old = db.games[key];
-      if ((old?.revision || 0) !== expectedRevision) {
-        throw new Error("This save changed in another tab. Reload this page before playing again.");
-      }
+      if ((old?.revision || 0) !== expectedRevision) throw new Error("This save changed in another tab. Reload this page before playing again.");
       let best = old?.best ?? null;
-      if (score !== null && Number.isFinite(score) && score >= 0) {
-        const lowerWins = gameCatalog[gameId].leaderboardOrder === "asc";
-        best = best === null ? score : (lowerWins ? Math.min(best, score) : Math.max(best, score));
+      if (score !== null) {
+        if (!Number.isSafeInteger(score) || score < 0 || score > 1e9) throw new Error("Invalid score.");
+        best = best === null ? score : Math.max(best,score);
       }
-      db.games[key] = { version: 1, revision: expectedRevision + 1,
-        updatedAt: new Date().toISOString(), state, best };
-      return db.games[key].revision;
+      db.games[key] = { version:1, revision:expectedRevision+1, updatedAt:new Date().toISOString(), state, best, syncedBest:old?.syncedBest ?? null };
+      return expectedRevision+1;
     });
+    syncSoon();
+    return revision;
   }
-  return { KEY, read, update, getRecord, saveGame };
+  async function flushScores() {
+    if (pendingSync) return pendingSync;
+    const profile = Profiles.active();
+    if (!profile) return;
+    pendingSync = (async () => {
+      await Promise.resolve();
+      try {
+        const db = read();
+        for (const [id,game] of Object.entries(gameCatalog)) {
+          if (!game.playable || !game.leaderboardMetric) continue;
+          const key = gameKey(profile.id,id), record = db.games[key];
+          if (record?.best == null || (record.syncedBest != null && record.best <= record.syncedBest)) continue;
+          if (Profiles.active()?.id !== profile.id) break;
+          const { data, error } = await ArcadeOnline.requireClient().rpc("arcade_submit_score",{ p_game:id, p_score:record.best, p_expected_profile:profile.id });
+          if (error) throw error;
+          if (!Number.isSafeInteger(data) || data < record.best) throw new Error("Invalid leaderboard response.");
+          await update(latest => {
+            const fresh = latest.games[key];
+            if (!fresh) return;
+            fresh.best = Math.max(fresh.best ?? 0,data);
+            fresh.syncedBest = Math.max(fresh.syncedBest ?? 0,data);
+          });
+        }
+        const latest = read();
+        const stillPending = Object.entries(latest.games).some(([key,r]) => key.startsWith(profile.id + ":") && r.best !== null && (r.syncedBest == null || r.best > r.syncedBest));
+        if (stillPending) { ArcadeOnline.reportSync("Game saved. Syncing the latest best score..."); syncSoon(); }
+        else ArcadeOnline.reportSync("Best scores synced online.");
+      } catch (error) {
+        ArcadeOnline.reportSync("Game saved on this device. Leaderboard sync is pending; it will retry when connected.",true);
+        throw error;
+      } finally { pendingSync = null; }
+    })();
+    return pendingSync;
+  }
+  window.addEventListener("online",() => flushScores().catch(() => {}));
+  setInterval(() => flushScores().catch(() => {}),15000);
+  return { getRecord,saveGame,flushScores };
 })();

@@ -1,3 +1,5 @@
+(async () => {
+  await window.arcadeAppReady;
 /* The URL chooses the game. Only implemented games are started. */
 const query = new URLSearchParams(location.search);
 const selectedGameId = query.get("game");
@@ -27,8 +29,8 @@ if (selectedGame) {
       document.querySelector(".instructions-panel h3").textContent = "Controls";
       document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
       document.querySelector("#save-note").textContent = profile
-        ? (isDoom ? "One Doom save for this profile. Autosaves every 10 seconds while alive and when leaving through site links. Save game creates a checkpoint immediately. Wait for Saved before closing. Continue restores it; New game replaces it and keeps your leaderboard best." : "One RPS save for this profile, updated after every round. Continue restores it. New game replaces it and keeps your leaderboard best.")
-        : "Guest games are not saved or ranked. Use Profile to sign in or create a local profile.";
+        ? (isDoom ? "One Doom save for this profile on this device. Autosaves every 10 seconds while alive and when leaving through site links. Save game creates a checkpoint immediately. Wait for Saved before closing. Continue restores it; New game replaces it and keeps your leaderboard best." : "One RPS save for this profile on this device, updated after every round. Continue restores it. New game replaces it and keeps your leaderboard best.")
+        : "Guest games are not saved or ranked. Use Profile to sign in or create an online profile.";
       document.querySelector(".game-bottom-bar span").textContent = isDoom ? "Save game pauses play. Click Resume when ready." : "Choose again to play another round.";
       const button = document.querySelector(".game-bottom-bar button");
       button.disabled = false;
@@ -51,7 +53,7 @@ if (selectedGame) {
       document.querySelector(".draft-badge").textContent = "Ready to play";
       document.querySelector(".game-toolbar").textContent = "Profile: " + (profile?.username || "Guest");
       document.querySelector(".instructions-panel h3").textContent = "Controls";
-      document.querySelector("#save-note").textContent = profile ? "One save per profile, updated automatically while playing and when paused. Continue restores your run paused. New game replaces it and keeps your leaderboard best." : "Guest games are not saved or ranked. Sign in through Profile before playing.";
+      document.querySelector("#save-note").textContent = profile ? "One save per profile on this device, updated automatically while playing and when paused. Continue restores your run paused. New game replaces it and keeps your leaderboard best." : "Guest games are not saved or ranked. Sign in through Profile before playing.";
       document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
       document.querySelector(".game-bottom-bar span").textContent = "Pause before taking a break. Saved games resume when you are ready.";
       const button = document.querySelector(".game-bottom-bar button");
@@ -68,3 +70,5 @@ if (selectedGame) {
   document.querySelector("#game-title").textContent = "Game not found";
   document.querySelector("#game-description").textContent = "Use All games to choose a title.";
 }
+
+})();

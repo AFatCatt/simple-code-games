@@ -1,5 +1,6 @@
 /* Shared profile dialog, navigation and homepage game menus. */
-(() => {
+window.arcadeAppReady = (async () => {
+  await Profiles.ready;
   const notice = document.createElement("p");
   notice.className = "notice arcade-notice";
   notice.setAttribute("role", "alert");
@@ -10,12 +11,18 @@
     showArcadeError("Open index.html with Live Server to use profiles, saves and leaderboards reliably.");
   }
 
+  const syncStatus = document.createElement("p");
+  syncStatus.className = "small muted"; syncStatus.setAttribute("role","status");
+  document.querySelector("main").prepend(syncStatus);
+  window.addEventListener("arcadesyncchange", event => { syncStatus.textContent = event.detail.message; });
+  window.addEventListener("arcadeauthlost", () => showArcadeError("Your session ended or changed. Reload the page and sign in again."));
+  if (Profiles.error) showArcadeError(Profiles.error);
   let active = null;
   try { active = Profiles.active(); } catch (error) { showArcadeError(error.message); }
   const dialog = document.querySelector("#profile-dialog");
   dialog.innerHTML = `
     <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
-    <p class="eyebrow">Your corner of the arcade</p><h2 id="profile-title">Local profiles</h2>
+    <p class="eyebrow">Your corner of the arcade</p><h2 id="profile-title">Your profile</h2>
     <p id="active-profile-name"></p>
     <button id="sign-out" type="button" class="button" hidden>Sign out</button>
     <form id="login-form" class="profile-form">
@@ -39,7 +46,7 @@
       </form>
     </details>
     <p id="profile-message" role="status" aria-live="polite"></p>
-    <p class="small muted">Local to this browser and site address. These are not online accounts. Use a password you do not use elsewhere. There is no password recovery; clearing browser data removes profiles and saves.</p>`;
+    <p class="small muted">Your username and password work on any device. Best scores are shared online. Game checkpoints stay on the device where you play. There is no password recovery in this version.</p>`;
 
   const message = document.querySelector("#profile-message");
   document.querySelector("#active-profile-name").textContent = active ? "Signed in as " + active.username : "Playing as Guest. Sign in to save and join leaderboards.";
@@ -56,6 +63,7 @@
     dialog.querySelectorAll('input[type="password"]').forEach(input => input.value = "");
   });
 
+  ArcadeStorage.flushScores().catch(() => {});
   let profileBusy = false;
   async function changeProfile(action) {
     if (profileBusy) return;
@@ -65,6 +73,7 @@
     message.textContent = "Please wait...";
     try {
       await window.currentGame?.beforeLeave?.();
+      await ArcadeStorage.flushScores().catch(() => {});
       await action();
       location.reload();
     } catch (error) { message.textContent = error.message; }
@@ -131,7 +140,7 @@
       preview.hidden = Boolean(game.playable);
       gameDialog.querySelector(".menu-status").textContent = game.playable ? "Ready to play" : "In development";
       gameDialog.querySelector(".small.muted").textContent = storageError ||
-        (game.playable ? (active ? "One save per profile. Continue restores it. New game can replace it; your leaderboard best stays." : "Guest games are not saved. Sign in through Profile to save your progress.") : "This game is still in development.");
+        (game.playable ? (active ? "One save per profile on this device. Continue restores it. New game can replace it; your leaderboard best stays." : "Guest games are not saved. Sign in through Profile to save your progress.") : "This game is still in development.");
       instructionsPanel.hidden = true;
       instructionsButton.setAttribute("aria-expanded", "false");
       gameDialog.showModal();

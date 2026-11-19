@@ -20,3 +20,11 @@ The original shareware archive is available in the [idgames idstuff/doom mirror]
 The distribution clarification appended to the shareware license is John Carmack's 1999 statement, preserved in [this license copy](https://github.com/redox-os/freedoom/blob/master/LICENSE-DOOM1). Keep the license, credits, corresponding source, and third-party notices with redistributed copies of this update.
 
 FreePats archive provenance: [20060219 archive mirror](https://distfiles.macports.org/freepats/freepats-20060219.tar.bz2), SHA-256 `0261ea1057b232183fa472432d5cedb0dca33698a5319328cdf193d4b2193c8a`. The smaller resource bundle contains the melodic patches referenced by the Episode 1 music, the drum bank, and a configuration mapping those samples. It is not a new sample recording.
+
+
+## Supabase browser client
+
+Supabase JavaScript client 2.119.2 is bundled locally under the MIT license.
+Source: https://github.com/supabase/supabase-js
+License: ../assets/vendor/supabase/LICENSE
+It connects online profiles and shared leaderboards to the project configured in js/online-config.js.

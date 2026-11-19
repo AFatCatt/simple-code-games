@@ -2,7 +2,7 @@
    Edit these color variables first when changing the site's appearance. */
 
 :root  {
-  --cyan-blue: #162333;
+  --navy: #162333;
   --paper: #f3f1eb;
   --white: #ffffff;
   --ink: #1c293a;
@@ -487,32 +487,6 @@ dialog p  {
 
 .menu-instructions h3  {
   margin-bottom: 6px;
-}
-
-.profile-row  {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border-block: 1px solid var(--line);
-  padding: 18px 0;
-  margin: 20px 0;
-  font-size: 13px;
-}
-
-.avatar  {
-  background: #e1e7ed;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-weight: bold;
-}
-
-.selected-label  {
-  font-size: 11px;
-  margin-left: auto;
-  color: #3e6c48;
 }
 
 label  {

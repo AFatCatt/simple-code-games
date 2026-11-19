@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with local profiles, saves, and leaderboards.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>How to play | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/profiles.css">
+  <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
+  <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
   <script src="js/catalog.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/storage.js" defer></script>
-  <script src="js/profiles.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
+  <script src="js/online-config.js?v=online-20261119" defer></script>
+  <script src="js/online.js?v=cleanup-20261119" defer></script>
+  <script src="js/storage.js?v=cleanup-20261119" defer></script>
+  <script src="js/profiles.js?v=cleanup-20261119" defer></script>
+  <script src="js/app.js?v=cleanup-20261119" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -29,7 +32,7 @@
     </div>
   </header>
   <main id="main-content" class="page-shell">
-    <p class="eyebrow">A quick guide</p><h1>Find your next game.</h1><p class="lead">Play Doom, Snake, Circle Hop or Medieval RPS, save your progress, and compare local scores.</p>
+    <p class="eyebrow">A quick guide</p><h1>Find your next game.</h1><p class="lead">Play Doom, Snake, Circle Hop or Medieval RPS, save your progress, and compare shared online scores.</p>
     <section class="content-section reading-width"><h2>Start playing</h2><p>Use Profile to create a unique username and password or sign in. Choose a playable game and New game to begin. RPS saves each round. Doom has a Save game button and saves every 10 seconds while alive. Wait for the Saved message before closing the tab. Continue restores your one saved game. Starting a new game replaces that save after confirmation while keeping your leaderboard best. Guests can play without saving. Snake and Circle Hop save their current state automatically and restore it paused. Click Resume when ready. Their leaderboards track high scores.</p><p>Use Tab to move between links and buttons. Press Enter to activate them, and Escape to close a menu.</p></section>
     <section class="guide-grid" aria-label="Game rules">
       <article class="guide-item"><h3>Original Doom</h3><p>Play the original shareware Episode 1 on Hurt Me Plenty. Click Start Doom or Continue saved game. WASD or arrows move, mouse or Ctrl fires, Space opens doors, Shift runs, 1–7 changes weapons, and Tab opens the map. Click the game to capture the mouse. Esc opens or closes the Doom menu and releases the mouse. The website Menu button also opens it. Use Up/Down to choose an option, Enter to select, Left/Right to adjust sliders, and Backspace to go back. Settings are stored with your profile checkpoint. Save game pauses and writes your one checkpoint. Resume continues play. A dead player does not overwrite your last living checkpoint. Use Load Game in Doom to return to it, or reload the page and Continue.</p><p class="small"><strong>Controls:</strong> Keyboard and mouse</p><a href="game.html?game=doom">Play Original Doom →</a></article>
@@ -40,7 +43,7 @@
       <article class="guide-item"><h3>Medieval RPS</h3><p>Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield.</p><p class="small"><strong>Controls:</strong> Click or tap</p><a href="game.html?game=medieval-rps">Play Medieval RPS →</a></article>
     </section>
     <section class="content-section reading-width"><h2>Local saves and leaderboards</h2><p>Each profile has one save slot per game. RPS currently saves wins, losses, ties, streaks, and its last result after every round. Its leaderboard ranks best winning streaks. Doom saves your position, health, inventory, enemies, and current level. Its leaderboard ranks most kills in one level on the fixed Hurt Me Plenty difficulty. The Overall board adds placement points from each supported game: 10 for first, 9 for second, down to 1 for tenth. Ties share ranks and points. Snake saves its body, apple, active bomb, direction and apple score. Circle Hop saves its position, jump velocity, obstacle shapes, spawn countdown, speed and score. Pong and Memory Match boards will receive scores when those games are implemented.</p></section>
-    <section class="content-section reading-width"><h2>Where your data lives</h2><p>Use the same browser and address, including the port. Localhost and GitHub Pages have separate profiles and saves. Clearing browser data removes them. These are local profiles, not online accounts or secure protection from someone who controls the browser. Sign out on a shared computer. There is no password recovery.</p></section>
+    <section class="content-section reading-width"><h2>Where your data lives</h2><p>Profiles and best scores are stored online through Supabase. Sign in with the same username and password on any device to use your profile and join the shared leaderboards. Game checkpoints stay in the browser and site address where they were saved; Live Server and GitHub Pages have separate checkpoints. Clearing browser data removes local checkpoints, but does not delete your online account or leaderboard scores. Usernames are case-insensitive and cannot be changed. There is no password recovery in this version. Sign out on a shared device.</p></section>
   </main>
   <footer class="site-footer">
     <div class="footer-inner">
