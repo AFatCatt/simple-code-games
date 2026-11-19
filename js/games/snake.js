@@ -1,11 +1,13 @@
+/* Gameplay by Victoria Mason. Profile/save integration and edge-case fixes added 2026-11-19. */
 
-function loadSnakeGame(container, startImmediately = false) {
+function loadSnakeGame(container, startImmediately = false, options = {}) {
   // The shared page provides the canvas and controls; this function owns Snake state.
   const canvas = container.querySelector("#game-canvas");
   if (!canvas) return;
 
   const context = canvas.getContext("2d");
   const box = 20;
+  const stepMilliseconds = 140; // Slightly slower than the original 120 ms step.
   const size = canvas.width;
   const scoreDisplay = container.querySelector("#score-display");
   const message = container.querySelector("#announcement");
@@ -22,6 +24,8 @@ function loadSnakeGame(container, startImmediately = false) {
   let running = false;
   let paused = false;
   let timer = null;
+  let outcome = null;
+  let turnPending = false;
 
   // Keep the text labels synchronized with the game's internal state.
   function setGameState(state) {
@@ -37,14 +41,12 @@ function loadSnakeGame(container, startImmediately = false) {
   }
 
   function createFood() {
-    // Food is placed on the movement grid and rerolled if it overlaps the snake.
-    const maxIndex = size / box;
-    do {
-      food = {
-        x: Math.floor(Math.random() * maxIndex) * box,
-        y: Math.floor(Math.random() * maxIndex) * box,
-      };
-    } while (snake.some((segment) => segment.x === food.x && segment.y === food.y));
+    // Select from free cells, including the full-board win case.
+    const free = [];
+    for (let y = 0; y < size; y += box) for (let x = 0; x < size; x += box) {
+      if (!snake.some(segment => segment.x === x && segment.y === y)) free.push({ x, y });
+    }
+    food = free.length ? free[Math.floor(Math.random() * free.length)] : null;
   }
 
   function drawBoard() {
@@ -73,7 +75,7 @@ function loadSnakeGame(container, startImmediately = false) {
     drawBoard();
 
     context.fillStyle = "#f59e0b";
-    context.fillRect(food.x, food.y, box, box);
+    if (food) context.fillRect(food.x, food.y, box, box);
 
     snake.forEach((segment, index) => {
       context.fillStyle = index === 0 ? "#34d399" : "#a7f3d0";
@@ -84,14 +86,15 @@ function loadSnakeGame(container, startImmediately = false) {
     });
   }
 
-  function endGame() {
+  function endGame(won = false) {
+    outcome = won ? "won" : "over";
     running = false;
     paused = false;
     clearInterval(timer);
     timer = null;
 
     if (message) {
-      message.textContent = "Game over! Final score: " + score + ". Press New game to play again.";
+      message.textContent = (won ? "Board complete! Final score: " : "Game over! Final score: ") + score + ". Press New game to play again.";
     }
 
     if (stageMessage) stageMessage.hidden = false;
@@ -102,26 +105,25 @@ function loadSnakeGame(container, startImmediately = false) {
     if (newGameButton) {
       newGameButton.textContent = "New game";
     }
-    setGameState("game over");
+    setGameState(won ? "won" : "game over");
+    options.onChange?.(true);
   }
 
   function update() {
-    if (!running) return;
+    if (!running || paused) return;
+    turnPending = false;
 
     const head = {
-      x: snake[0].x + dx,
-      y: snake[0].y + dy,
+      x: (snake[0].x + dx + size) % size,
+      y: (snake[0].y + dy + size) % size,
     };
 
-    const ateFood = head.x === food.x && head.y === food.y;
+    const ateFood = food && head.x === food.x && head.y === food.y;
+    const body = ateFood ? snake : snake.slice(0, -1);
 
-    // Check bounds and body contact before moving the head or changing the tail.
+    // Wrap first, then check the destination for body contact.
     if (
-      head.x < 0 ||
-      head.y < 0 ||
-      head.x >= size ||
-      head.y >= size ||
-      snake.some((segment) => segment.x === head.x && segment.y === head.y)
+      body.some((segment) => segment.x === head.x && segment.y === head.y)
     ) {
       endGame();
       return;
@@ -133,11 +135,13 @@ function loadSnakeGame(container, startImmediately = false) {
       score += 1;
       updateScore();
       createFood();
+      if (!food) { draw(); endGame(true); return; }
     } else {
       snake.pop();
     }
 
     draw();
+    options.onChange?.(false);
   }
 
   function startGame() {
@@ -153,6 +157,7 @@ function loadSnakeGame(container, startImmediately = false) {
     dx = box;
     dy = 0;
     score = 0;
+    outcome = null; turnPending = false;
     updateScore();
     running = true;
     paused = false;
@@ -173,7 +178,8 @@ function loadSnakeGame(container, startImmediately = false) {
     setGameState("playing");
     createFood();
     draw();
-    timer = setInterval(update, 120);
+    timer = setInterval(update, stepMilliseconds);
+    options.onChange?.(true);
   }
 
   function togglePause() {
@@ -187,6 +193,7 @@ function loadSnakeGame(container, startImmediately = false) {
       if (stageMessage) stageMessage.hidden = false;
       if (pauseButton) pauseButton.textContent = "Resume";
       setGameState("paused");
+      options.onChange?.(true);
       return;
     }
 
@@ -194,10 +201,12 @@ function loadSnakeGame(container, startImmediately = false) {
     if (message) message.textContent = "Use the arrow keys to control the snake.";
     if (pauseButton) pauseButton.textContent = "Pause";
     setGameState("playing");
-    timer = setInterval(update, 120);
+    timer = setInterval(update, stepMilliseconds);
+    options.onChange?.(true);
   }
 
   function handleKey(event) {
+    if (document.querySelector("dialog[open]") || event.target.closest?.("input, textarea, select, [contenteditable=true]")) return;
     // Ignore reverse turns so the snake cannot immediately collide with its own neck.
     const nextDir = {
       ArrowUp: { x: 0, y: -box },
@@ -210,17 +219,21 @@ function loadSnakeGame(container, startImmediately = false) {
       return;
     }
 
-    if (!running || paused || (nextDir.x === -dx && nextDir.y === -dy)) {
+    if (running && !paused) event.preventDefault();
+    if (!running || paused || turnPending || (nextDir.x === -dx && nextDir.y === -dy)) {
       return;
     }
 
     event.preventDefault();
     dx = nextDir.x;
     dy = nextDir.y;
+    turnPending = true;
+    options.onChange?.(false);
   }
 
+  const requestNewGame = () => options.onRequestNewGame ? options.onRequestNewGame() : startGame();
   if (newGameButton) {
-    newGameButton.addEventListener("click", startGame);
+    newGameButton.addEventListener("click", requestNewGame);
   }
 
   if (pauseButton) {
@@ -237,17 +250,39 @@ function loadSnakeGame(container, startImmediately = false) {
   ];
   createFood();
   draw();
-  if (startImmediately) startGame();
+  if (options.initialState) {
+    const saved = options.initialState;
+    snake = saved.snake.map(segment => ({ ...segment }));
+    food = saved.food ? { ...saved.food } : null;
+    dx = saved.dx; dy = saved.dy; score = saved.score; turnPending = Boolean(saved.turnPending);
+    outcome = ["over", "won"].includes(saved.phase) ? saved.phase : null;
+    running = ["playing", "paused"].includes(saved.phase); paused = running;
+    updateScore(); draw();
+    if (message) message.textContent = outcome ? "Saved game finished. Press New game to play again." : (running ? "Saved game restored. Click Resume when ready." : "Press Start game to begin.");
+    if (stageMessage) stageMessage.hidden = false;
+    if (pauseButton) { pauseButton.disabled = !running; pauseButton.textContent = running ? "Resume" : "Pause"; }
+    if (newGameButton) newGameButton.textContent = saved.phase === "ready" ? "Start game" : "New game";
+    setGameState(outcome || (running ? "paused" : "ready"));
+  } else if (startImmediately) startGame();
+  else { if (message) message.textContent = "Press Start game to begin. Use the arrow keys to move."; setGameState("ready"); }
 
-  return function cleanup() {
+  function getState() {
+    return { version: 1, game: "snake", snake: snake.map(segment => ({ ...segment })), food: food ? { ...food } : null,
+      dx, dy, score, turnPending, phase: outcome || (running ? (paused ? "paused" : "playing") : "ready") };
+  }
+
+  function cleanup() {
     // Stop the timer and detach listeners if the game page is disposed.
     clearInterval(timer);
     if (newGameButton) {
-      newGameButton.removeEventListener("click", startGame);
+      newGameButton.removeEventListener("click", requestNewGame);
     }
     if (pauseButton) {
       pauseButton.removeEventListener("click", togglePause);
     }
     document.removeEventListener("keydown", handleKey);
-  };
+  }
+  return { getState, reset: startGame, pause: () => { if (running && !paused) togglePause(); },
+    resume: () => { if (running && paused) togglePause(); }, destroy: cleanup };
 }
+

@@ -1,0 +1,9 @@
+.canvas-stage { padding: 22px; background: #edf2f6; }
+.canvas-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.canvas-controls strong { margin-right: auto; }
+.canvas-stage canvas { display: block; max-width: 100%; height: auto; margin: auto; background: #162333; border-radius: 8px; touch-action: manipulation; }
+.canvas-stage canvas:focus-visible { outline: 3px solid #397dad; outline-offset: 3px; }
+.canvas-message { margin-top: 18px; padding: 14px; border: 1px solid #c9d4df; background: white; border-radius: 8px; }
+.canvas-message p { margin: 5px 0 0; }
+.canvas-stage .save-error { color: #9c321e; }
+@media (max-width: 560px) { .canvas-stage { padding: 12px; } }

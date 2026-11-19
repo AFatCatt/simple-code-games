@@ -1,0 +1,17 @@
+.doom-stage { padding: 18px; background: #171d24; color: #f4f5f6; }
+.doom-screen { position: relative; background: #000; }
+#doom-canvas { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; image-rendering: pixelated; outline-offset: 3px; }
+#doom-canvas:focus-visible { outline: 3px solid #6dc6ff; }
+.doom-start { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: #171d24ee; text-align: center; padding: 24px; }
+.doom-start h2 { color: #fff; font-size: 32px; }
+.doom-start p { margin: 12px 0 24px; }
+.doom-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 18px 0 8px; }
+.doom-actions .button { background: #f8f8f5; color: #172333; }
+#doom-save-status { margin: 10px 0; font-size: 14px; }
+#doom-save-status.save-error { color: #ffd0bf; }
+.doom-controls { font-size: 13px; color: #c2d1df; margin: 10px 0 0; }
+.doom-stage:fullscreen { display: flex; flex-direction: column; justify-content: center; padding: 16px; }
+.doom-stage:fullscreen .doom-screen { min-height: 0; align-self: center; }
+.doom-stage:fullscreen #doom-canvas { width: auto; max-width: 100%; height: min(75vh, 900px); }
+.doom-stage:fullscreen .doom-actions, .doom-stage:fullscreen p { align-self: center; }
+@media (max-width: 600px) { .doom-stage { padding: 10px; } .doom-start h2 { font-size: 24px; } }

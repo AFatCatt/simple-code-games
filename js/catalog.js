@@ -4,16 +4,22 @@
 const gameCatalog = {
   "doom": {
     "title": "Original Doom",
-    "description": "Explore a classic first-person game through a future browser integration.",
-    "controls": "Keyboard and mouse",
-    "instructions": "A browser runtime and permitted game files will be added later. Its instructions and save support will be checked during integration.",
-    "image": "assets/images/doom.svg"
+    "playable": true,
+    "leaderboardMetric": "Most kills in one level",
+    "leaderboardOrder": "desc",
+    "description": "Play Episode 1 of the original Doom, with profile saves and a local leaderboard.",
+    "controls": "WASD or arrows · Mouse or Ctrl to fire · Space to open · Shift to run",
+    "instructions": "Explore Knee-Deep in the Dead on Hurt Me Plenty difficulty. Click the game to capture the mouse. Use WASD or arrows to move, mouse or Ctrl to fire, Space for doors, 1–7 for weapons, and Tab for the map. Esc opens or closes the menu and releases the mouse. Use arrows and Enter in menus; Left/Right adjust settings and Backspace goes back. Saves update every 10 seconds while alive, or click Save game. The leaderboard records your most kills in one level.",
+    "image": "assets/images/doom.png"
   },
   "snake": {
     "title": "Snake",
-    "description": "Collect food, grow your snake, and avoid the walls and your own tail.",
+    "playable": true,
+    "leaderboardMetric": "High score",
+    "leaderboardOrder": "desc",
+    "description": "Collect food, grow your snake, wrap around the edges, and avoid your own body.",
     "controls": "Arrow keys",
-    "instructions": "Use the arrow keys to change direction. Collect food to earn points. Hitting a wall or your own body ends the run.",
+    "instructions": "Use the arrow keys to change direction. Collect food to earn points. Crossing an edge brings you back on the opposite side in the same row or column. Hitting your own body ends the run.",
     "image": "assets/images/snake.svg"
   },
   "pong": {
@@ -32,8 +38,11 @@ const gameCatalog = {
   },
   "circle-hop": {
     "title": "Circle Hop",
+    "playable": true,
+    "leaderboardMetric": "High score",
+    "leaderboardOrder": "desc",
     "description": "Time each jump to carry your circle over the next obstacle.",
-    "controls": "Space or tap",
+    "controls": "Space, Up arrow or tap",
     "instructions": "Press Space or tap the game area to jump. Clear the shapes in your path and keep going to increase your score. Touching an obstacle ends the run.",
     "image": "assets/images/circle-hop.svg"
   },

@@ -121,7 +121,7 @@
       try {
         const profile = Profiles.active();
         const record = profile && game.playable ? ArcadeStorage.getRecord(profile.id, id) : null;
-        saved = Boolean(record && id === "medieval-rps" && validRPSState(record.state));
+        saved = Boolean(record && (id === "medieval-rps" ? validRPSState(record.state) : id === "doom" ? DoomSave.valid(record.state) : CanvasSaves.valid(id, record.state)));
       } catch (error) { storageError = error.message; }
       newButton.disabled = !game.playable;
       continueButton.disabled = !saved;

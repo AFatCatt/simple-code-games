@@ -67,7 +67,7 @@ const ArcadeLeaderboards = (() => {
       const empty = document.createElement("p");
       empty.className = "leaderboard-empty";
       empty.textContent = selected === "overall" || gameCatalog[selected].playable
-        ? "No scores yet. Sign in to a profile and play Medieval RPS to join the board."
+        ? (selected === "overall" ? "No scores yet. Sign in and play any supported game to join the board." : "No scores yet. Sign in and play " + gameCatalog[selected].title + " to join the board.")
         : "No scores yet. This board will be available when the game is implemented.";
       panel.append(empty);
       return;

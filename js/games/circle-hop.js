@@ -1,4 +1,5 @@
-window.loadCircleHopGame = function (container, startImmediately = false) {
+/* Gameplay by Victoria Mason. Profile/save integration added 2026-11-19. */
+window.loadCircleHopGame = function (container, startImmediately = false, options = {}) {
   // Resolve the shared page elements once so the animation loop can update them.
   const canvas = container.querySelector("#game-canvas");
   if (!canvas) {
@@ -76,19 +77,23 @@ window.loadCircleHopGame = function (container, startImmediately = false) {
     if (stageMessage) stageMessage.hidden = true;
     setState("playing");
     animationId = requestAnimationFrame(loop);
+    if (newGameButton) newGameButton.textContent = "New game";
+    options.onChange?.(true);
   }
 
   function endGame() {
     if (animationId !== null) cancelAnimationFrame(animationId);
     animationId = null;
     setState("over");
-    showMessage("Game over!", "Score: " + score + ". Press New game to try again.");
+    showMessage("Game over!", "Score: " + Math.floor(score) + ". Press New game to try again.");
+    options.onChange?.(true);
   }
 
   function jump() {
-    if (state === "ready") startGame();
+    if (state === "ready") { requestNewGame(); return; }
     if (state !== "playing" || player.y < groundY - player.radius) return;
     player.velocityY = -520;
+    options.onChange?.(false);
   }
 
   function collides(obstacle) {
@@ -137,6 +142,7 @@ window.loadCircleHopGame = function (container, startImmediately = false) {
     }
 
     draw();
+    options.onChange?.(false);
     if (state === "playing") animationId = requestAnimationFrame(loop);
   }
 
@@ -152,9 +158,11 @@ window.loadCircleHopGame = function (container, startImmediately = false) {
       setState("playing");
       animationId = requestAnimationFrame(loop);
     }
+    options.onChange?.(true);
   }
 
   function handleKeyDown(event) {
+    if (document.querySelector("dialog[open]") || event.target.closest?.("input, textarea, select, [contenteditable=true]")) return;
     // Space and Up jump; Escape pauses or resumes without requiring a button click.
     if (event.code === "Space" || event.key === "ArrowUp") {
       if (state === "ready" || state === "playing") {
@@ -170,7 +178,8 @@ window.loadCircleHopGame = function (container, startImmediately = false) {
     jump();
   }
 
-  newGameButton?.addEventListener("click", startGame);
+  const requestNewGame = () => options.onRequestNewGame ? options.onRequestNewGame() : startGame();
+  newGameButton?.addEventListener("click", requestNewGame);
   pauseButton?.addEventListener("click", togglePause);
   canvas.addEventListener("click", handleCanvasClick);
   document.addEventListener("keydown", handleKeyDown);
@@ -179,14 +188,33 @@ window.loadCircleHopGame = function (container, startImmediately = false) {
   showMessage("Press New game to start.", "Jump with Space, Up arrow, or a click/tap on the game board.");
   setState("ready");
   draw();
-  if (startImmediately) startGame();
+  if (options.initialState) {
+    const saved = options.initialState;
+    score = saved.score; speed = saved.speed; spawnCountdown = saved.spawnCountdown;
+    player.y = saved.playerY; player.velocityY = saved.velocityY;
+    obstacles = saved.obstacles.map(obstacle => ({ ...obstacle }));
+    if (scoreDisplay) scoreDisplay.textContent = "Score: " + Math.floor(score);
+    setState(["playing", "paused"].includes(saved.phase) ? "paused" : saved.phase);
+    showMessage(state === "over" ? "Saved game finished" : "Saved game restored",
+      state === "paused" ? "Click Resume when ready." : "Press New game to play.");
+    if (newGameButton) newGameButton.textContent = state === "ready" ? "Start game" : "New game";
+    draw();
+  } else if (startImmediately) startGame();
 
-  return function cleanup() {
+  function getState() {
+    return { version: 1, game: "circle-hop", phase: state, score, speed, spawnCountdown,
+      playerY: player.y, velocityY: player.velocityY, obstacles: obstacles.map(obstacle => ({ ...obstacle })) };
+  }
+
+  function cleanup() {
     // Remove the animation and listeners if this game view is ever unloaded.
     if (animationId !== null) cancelAnimationFrame(animationId);
-    newGameButton?.removeEventListener("click", startGame);
+    newGameButton?.removeEventListener("click", requestNewGame);
     pauseButton?.removeEventListener("click", togglePause);
     canvas.removeEventListener("click", handleCanvasClick);
     document.removeEventListener("keydown", handleKeyDown);
-  };
+  }
+  return { getState, reset: startGame, pause: () => { if (state === "playing") togglePause(); },
+    resume: () => { if (state === "paused") togglePause(); }, destroy: cleanup };
 };
+
