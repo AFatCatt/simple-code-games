@@ -73,7 +73,7 @@ Use the same Supabase URL and publishable key locally and on GitHub Pages to sha
 
 Existing projects: run the revised `01-memory-match.sql`, even if you ran the earlier version. New projects get the new score support from `setup.sql`.
 
-Memory Match shows 2, 4, 6 and eventually 16 cards for four seconds before hiding them. Match pairs without a mistake. One wrong pair ends the run. Clearing all 16 offers Continue: another full board shuffles and the same score continues. Each matched pair adds one point. Stage and picks save locally; the best run syncs online.
+Memory Match shows the cards for up to 60 seconds, with Start matching available for an optional early start. Matching has no time limit. The board grows by two cards per stage from 2 cards to 10 by 10, with 100 cards and 50 distinct pairs. One wrong pair ends the run. Clearing all 100 offers Continue: another full board shuffles and the same score continues. Each matched pair adds one point. The stage, picks and preview deadline save locally; the best run syncs online. The timer and larger board use the existing memory-run category and need no additional SQL migration after the leaderboard repair.
 
 The new rules use the `memory-run` score/save key. The public Memory Match leaderboard maps to that key. Earlier fixed-board records under `memory` are retained but excluded from current rankings and Overall. This prevents the old 1000-point scale from mixing with matched-pair totals. Other games are unchanged.
 

@@ -37,7 +37,7 @@ const gameCatalog = {
     "leaderboardOrder": "desc",
     "description": "Memorize the cards, match pairs, and keep your run alive.",
     "controls": "Click or tap",
-    "instructions": "Cards are shown for four seconds, then turn over. Match two cards at a time. One wrong pair ends the run. Start with 2 cards, then clear 4, 6, 8, 10, 12, 14 and 16. Continue after a full board to shuffle another 16-card board while keeping your score. Each matched pair earns one point. Your best run ranks on the leaderboard.",
+    "instructions": "Memorize the face-up cards for up to 60 seconds. Click Start matching whenever you are ready, or wait for the timer to turn the cards over automatically. Matching is untimed: choose two matching cards at a time, and one wrong pair ends the run. Start with 2 cards and add 2 per stage until the board reaches 10 by 10 (100 cards, 50 pairs). Continue after a full board to shuffle another 10 by 10 board while keeping your score. Each matched pair earns one point. Your best run ranks on the leaderboard.",
     "image": "assets/images/memory.png"
   },
   "circle-hop": {

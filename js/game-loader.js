@@ -81,9 +81,9 @@ if (selectedGame) {
       document.querySelector(".instructions-panel h3").textContent = "Controls";
       document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
       document.querySelector("#save-note").textContent = Profiles.active()
-        ? "One run saved for this profile on this device. Continue restores your stage and score. New game starts from two cards and keeps your best run."
+        ? "One run saved for this profile on this device. Continue restores your stage, score and memorization deadline. New game starts from two cards and keeps your best run."
         : "Guest games are not saved or ranked. Sign in through Profile to save.";
-      document.querySelector(".game-bottom-bar span").textContent = "Match pairs without a mistake. Continue keeps your score.";
+      document.querySelector(".game-bottom-bar span").textContent = "Memorize for up to a minute, or start early. Grow to 10 × 10. Continue keeps your score.";
       const button = document.querySelector(".game-bottom-bar button"); button.disabled = false;
       button.addEventListener("click", async () => {
         button.disabled = true;
