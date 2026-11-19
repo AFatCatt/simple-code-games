@@ -1,6 +1,6 @@
 /* One local checkpoint per ONLINE account/game. Best scores sync to Supabase. */
 const ArcadeStorage = (() => {
-  const KEY = "simple-code-games:online-saves:v1", LOCK = KEY + ":lock";
+ const KEY = "simple-code-games:online-saves:v2", LOCK = KEY + ":lock";
   const empty = () => ({ version: 1, games: {} });
   let pendingSync = null, syncTimer = null, lastSyncStatus = "";
   const syncFailures = new Map();
