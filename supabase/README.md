@@ -88,3 +88,9 @@ Passwords use pgcrypto bcrypt with a random salt and cost 10. The SQL detects th
 Room lists refresh every five seconds and active rooms every two seconds while visible. Active rooms can be resumed across devices using the same profile. Closing or leaving ends the room for both players; switching modes or closing the tab does not. Rooms expire two hours after the last game action. Expired records older than one day are cleaned when hosting. Room wins do not affect singleplayer streak rankings.
 
 New projects: run `setup.sql`, then `02-rps-multiplayer.sql`.
+
+## Memory leaderboard repair
+
+If the logs show `22023 Invalid game or score` for Memory uploads, run `03-memory-leaderboard-repair.sql` in Supabase SQL Editor. This brings score validation and Memory leaderboard mapping up to date without deleting data. Copying SQL files to GitHub does not execute them in the database.
+
+After applying the website patch, close old site tabs, reload and use Leaderboards > Memory Match > Refresh scores in the browser where you played. The saved best can then upload without a new high score. Setup-related upload rejections are paused until an explicit retry or page reload, and errors for one game no longer prevent other games from syncing.

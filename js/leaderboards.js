@@ -1,5 +1,5 @@
 /* All rankings come from the shared database, including for signed-out visitors. */
-(async () => {
+window.arcadeLeaderboardsReady = (async () => {
   await window.arcadeAppReady;
   const tabs = document.querySelector("#leaderboard-tabs"), panel = document.querySelector("#leaderboard-panel");
   const choices = [{id:"overall",title:"Overall"},...Object.entries(gameCatalog).map(([id,game]) => ({id,title:game.title}))];
@@ -7,7 +7,7 @@
   if (!choices.some(choice => choice.id === selected)) selected = "overall";
   const refresh = document.createElement("button"); refresh.type="button";refresh.className="button";refresh.textContent="Refresh scores";
   tabs.before(refresh);
-  async function render() {
+  async function render(force = false) {
     const token = ++request, board = selected;
     tabs.querySelectorAll("button").forEach(button => { const active=button.dataset.board===board;button.setAttribute("aria-selected",String(active));button.tabIndex=active?0:-1; });
     panel.setAttribute("aria-labelledby","tab-"+board); panel.setAttribute("aria-busy","true"); panel.replaceChildren();
@@ -18,7 +18,14 @@
       : (gameCatalog[board].leaderboardMetric ? "Ranked by "+gameCatalog[board].leaderboardMetric.toLowerCase()+". New games keep your best result." : "This game is still in development.");
     const status=document.createElement("p");status.setAttribute("role","status");status.textContent="Loading shared scores...";panel.append(heading,description,status);
     try {
-      await ArcadeStorage.flushScores().catch(() => {});
+      let syncProblem = "";
+      await ArcadeStorage.flushScores({ force }).catch(error => { syncProblem = error.message || "Your saved scores are waiting to sync."; });
+      if (token !== request) return;
+      const warningText = ArcadeStorage.getSyncError(board) || (board === "overall" ? syncProblem : "");
+      if (warningText) {
+        const warning = document.createElement("p"); warning.className = "notice"; warning.setAttribute("role", "status");
+        warning.textContent = warningText; panel.append(warning);
+      }
       const {data,error}=await ArcadeOnline.requireClient().rpc("arcade_leaderboard",{p_game:board});
       if (error) throw error;
       if (token!==request) return;
@@ -47,7 +54,7 @@
     if(event.key==="Home")index=0;else if(event.key==="End")index=buttons.length-1;else index=(index+(event.key==="ArrowRight"?1:-1)+buttons.length)%buttons.length;
     buttons[index].click();buttons[index].focus();
   });
-  refresh.addEventListener("click",render);
+  refresh.addEventListener("click", () => render(true));
   setInterval(()=>{if(!document.hidden)render()},30000);
-  render();
+  await render();
 })();

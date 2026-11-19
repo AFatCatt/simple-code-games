@@ -37,7 +37,7 @@ window.rpsMultiplayerReady = (async () => {
   const find = id => root.querySelector("#" + id), network = find("rps-network");
   const choices = { Sword: "⚔️", Archer: "🏹", Shield: "🛡️", Catapult: "🪨", Dragon: "🐉" };
   const key = "simple-code-games:rps-room:" + profile.id;
-  let room = null, resumeId = null, pending = null, timer = null, stopped = false;
+  let room = null, resumeId = null, pending = null, pendingKind = null, queuedAction = null, timer = null, stopped = false;
   let selectedRoom = null, listed = null;
   const buttons = Object.keys(choices).map(choice => {
     const b = document.createElement("button"); b.type = "button"; b.className = "button";
@@ -71,29 +71,32 @@ window.rpsMultiplayerReady = (async () => {
       row.append(label, join); find("rps-room-list").append(row);
     });
   }
+  function setText(node, text) { if (node.textContent !== text) node.textContent = text; }
+  function setDisabled(node, value) { if (node.disabled !== Boolean(value)) node.disabled = Boolean(value); }
+  function setHidden(node, value) { if (node.hidden !== Boolean(value)) node.hidden = Boolean(value); }
   function render() {
-    const busy = Boolean(pending);
-    find("rps-lobby").querySelectorAll("button").forEach(b => b.disabled = busy);
-    find("rps-host-password").disabled = busy;
-    find("rps-lobby").hidden = active(); find("rps-room").hidden = !room;
+    const busy = Boolean(queuedAction || (pending && !["state", "list"].includes(pendingKind)));
+    find("rps-lobby").querySelectorAll("button").forEach(b => setDisabled(b, busy));
+    setDisabled(find("rps-host-password"), busy);
+    setHidden(find("rps-lobby"), active()); setHidden(find("rps-room"), !room);
     if (!room) return;
-    find("rps-room-title").textContent = room.host + "'s room";
-    find("rps-room-access").textContent = room.protected ? "Password protected" : "Public room";
-    find("rps-players").textContent = `Host: ${room.host} | Guest: ${room.guest || "Waiting for a player"}`;
-    find("rps-round").textContent = `Round ${room.round} · You are ${profile.username} (${room.role})`;
-    find("rps-readiness").textContent = `Host: ${room.hostReady ? "choice locked" : "choosing"} | Guest: ${room.guestReady ? "choice locked" : "choosing"}`;
-    find("rps-room-score").textContent = `${room.host}: ${room.hostWins} wins | ${room.guest || "Guest"}: ${room.guestWins} wins | Ties: ${room.ties}`;
+    setText(find("rps-room-title"), room.host + "'s room");
+    setText(find("rps-room-access"), room.protected ? "Password protected" : "Public room");
+    setText(find("rps-players"), `Host: ${room.host} | Guest: ${room.guest || "Waiting for a player"}`);
+    setText(find("rps-round"), `Round ${room.round} · You are ${profile.username} (${room.role})`);
+    setText(find("rps-readiness"), `Host: ${room.hostReady ? "choice locked" : "choosing"} | Guest: ${room.guestReady ? "choice locked" : "choosing"}`);
+    setText(find("rps-room-score"), `${room.host}: ${room.hostWins} wins | ${room.guest || "Guest"}: ${room.guestWins} wins | Ties: ${room.ties}`);
     const result = find("rps-room-result");
-    if (room.closed) result.textContent = "This room was closed or expired. Host a new room or join another.";
-    else if (room.outcome) result.textContent = `${room.host} chose ${room.hostPick}. ${room.guest} chose ${room.guestPick}. ${room.outcome === "tie" ? "It is a tie!" : room[room.outcome] + " wins!"}`;
-    else if (!room.guest) result.textContent = "Waiting for someone to join. Your room is in the list under your username.";
-    else if (room.yourPick) result.textContent = `Your ${room.yourPick} is locked. Waiting for the other player.`;
-    else result.textContent = "Choose your champion. Your choice locks immediately.";
-    buttons.forEach(b => b.disabled = busy || room.closed || !room.guest || Boolean(room.yourPick) || Boolean(room.outcome));
-    find("rps-next").hidden = room.role !== "host" || !room.outcome || room.closed;
-    find("rps-next").disabled = busy; find("rps-refresh").disabled = busy;
-    find("rps-leave").disabled = busy || room.closed;
-    find("rps-leave").textContent = room.role === "host" ? "Close room" : "Leave room";
+    if (room.closed) setText(result, "This room was closed or expired. Host a new room or join another.");
+    else if (room.outcome) setText(result, `${room.host} chose ${room.hostPick}. ${room.guest} chose ${room.guestPick}. ${room.outcome === "tie" ? "It is a tie!" : room[room.outcome] + " wins!"}`);
+    else if (!room.guest) setText(result, "Waiting for someone to join. Your room is in the list under your username.");
+    else if (room.yourPick) setText(result, `Your ${room.yourPick} is locked. Waiting for the other player.`);
+    else setText(result, "Choose your champion. Your choice locks immediately.");
+    buttons.forEach(b => setDisabled(b, busy || room.closed || !room.guest || Boolean(room.yourPick) || Boolean(room.outcome)));
+    setHidden(find("rps-next"), room.role !== "host" || !room.outcome || room.closed);
+    setDisabled(find("rps-next"), busy); setDisabled(find("rps-refresh"), busy);
+    setDisabled(find("rps-leave"), busy || room.closed);
+    setText(find("rps-leave"), room.role === "host" ? "Close room" : "Leave room");
   }
   function validate(data) {
     if (!data || typeof data.id !== "string" || typeof data.protected !== "boolean" || !["host", "guest"].includes(data.role) || !Number.isInteger(data.round) || typeof data.host !== "string" || !(data.guest === null || typeof data.guest === "string")) throw new Error("Invalid room response. Try Refresh room.");
@@ -104,9 +107,19 @@ window.rpsMultiplayerReady = (async () => {
     if (!stopped && !document.hidden) timer = setTimeout(() => action(active() ? "state" : "list"), active() ? 2000 : 5000);
   }
   function action(kind, extra = {}) {
-    if (stopped || pending) return pending || Promise.resolve();
+    if (stopped) return Promise.resolve();
+    if (pending) {
+      if (["state", "list"].includes(kind) || !["state", "list"].includes(pendingKind)) return pending;
+      // A click during a background read must be applied once, not dropped.
+      if (!queuedAction) {
+        queuedAction = pending.then(() => { queuedAction = null; return action(kind, extra); });
+        render();
+      }
+      return queuedAction;
+    }
     clearTimeout(timer);
     if (Profiles.active()?.id !== profile.id) { stopped = true; network.textContent = "Your profile changed. Reload the page."; return Promise.resolve(); }
+    pendingKind = kind;
     pending = (async () => {
       await Promise.resolve(); let resume = false;
       try {
@@ -120,19 +133,20 @@ window.rpsMultiplayerReady = (async () => {
           if (typeof data.currentRoomId === "string") { resumeId = data.currentRoomId; resume = true; }
         } else {
           room = validate(data); resumeId = null; remember(room.closed ? null : room.id);
-          find("rps-password-form").hidden = true; selectedRoom = null;
-          network.textContent = "Connected. Updates appear automatically.";
+          setHidden(find("rps-password-form"), true); selectedRoom = null;
+          setText(network, "Connected. Updates appear automatically.");
         }
       } catch (e) {
         if (stopped) return;
-        network.textContent = /PGRST202|42883|42703/.test(e.code || "")
+        setText(network, /PGRST202|42883|42703/.test(e.code || "")
           ? "Room-list setup is missing. The site owner must run the updated supabase/02-rps-multiplayer.sql."
-          : (e.message || "Connection lost. Automatic updates will retry.");
+          : (e.message || "Connection lost. Automatic updates will retry."));
         if (kind === "state" && (e.code === "42501" || /closed|expired|not available/i.test(e.message || ""))) { room = null; resumeId = null; remember(null); }
-      } finally { pending = null; if (!stopped) { render(); schedule(); } }
+      } finally { pending = null; pendingKind = null; if (!stopped) { render(); schedule(); } }
       if (resume && !stopped) await action("state");
     })();
-    render(); return pending;
+    if (!["state", "list"].includes(kind)) render();
+    return pending;
   }
   find("rps-host-form").addEventListener("submit", e => {
     e.preventDefault(); const password = find("rps-host-password").value;
@@ -153,7 +167,7 @@ window.rpsMultiplayerReady = (async () => {
   document.addEventListener("visibilitychange", visibility); window.addEventListener("online", visibility);
   function stop() { stopped = true; clearTimeout(timer); document.removeEventListener("visibilitychange", visibility); window.removeEventListener("online", visibility); }
   window.addEventListener("arcadeauthlost", stop); window.addEventListener("pagehide", stop, { once: true });
-  window.currentGame = { beforeLeave: async () => { if (pending) await pending; }, pause() {}, destroy: stop };
+  window.currentGame = { beforeLeave: async () => { if (queuedAction || pending) await (queuedAction || pending); }, pause() {}, destroy: stop };
   let saved = null; try { saved = localStorage.getItem(key); } catch { /* Optional resume hint. */ }
   if (saved && /^[0-9a-f-]{36}$/i.test(saved)) { resumeId = saved; await action("state"); }
   else await action("list");
