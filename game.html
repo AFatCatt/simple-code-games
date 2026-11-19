@@ -3,24 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Explore the six-game website design draft.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Medieval RPS with local profiles, saves, and leaderboards.">
   <title>Game layout | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/profiles.css">
   <link rel="stylesheet" href="css/game.css">
   <script src="js/catalog.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/profiles.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/games/medieval-rps.js" defer></script>
   <script src="js/game-loader.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <!-- Shared header: keep this navigation consistent across all four pages. -->
+  <!-- Shared navigation across the five pages. -->
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
       <nav class="main-nav" aria-label="Main navigation">
         <a href="index.html">Games</a>
+        <a href="leaderboards.html">Leaderboards</a>
         <a href="help.html">How to play</a>
         <a href="about.html">About</a>
       </nav>
@@ -56,16 +60,7 @@
   </footer>
 
   <!-- Native dialogs support Escape, keyboard focus, and an accessible title. -->
-  <dialog id="profile-dialog" aria-labelledby="profile-title">
-    <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
-    <p class="eyebrow">Your corner of the arcade</p>
-    <h2 id="profile-title">Local profiles</h2>
-    <p>Separate names and saved progress are planned for a later milestone.</p>
-    <div class="profile-row"><span class="avatar" aria-hidden="true">G</span><div><strong>Guest</strong><br><span class="muted">Current preview profile</span></div><span class="selected-label">Selected</span></div>
-    <label for="profile-name">New profile name</label>
-    <input id="profile-name" type="text" placeholder="Available in a later update" disabled>
-    <button class="button full-width" disabled>Create profile</button>
-    <p class="small muted">This draft does not save names, scores, or game progress. Planned local profiles will stay in the browser where they are created.</p>
-  </dialog>
+  <dialog id="profile-dialog" aria-labelledby="profile-title"></dialog>
 </body>
 </html>
+

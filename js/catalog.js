@@ -39,9 +39,13 @@ const gameCatalog = {
   },
   "medieval-rps": {
     "title": "Medieval RPS",
+    "playable": true,
+    "leaderboardMetric": "Best winning streak",
+    "leaderboardOrder": "desc",
     "description": "Choose Sword, Archer, Shield, Catapult, or Dragon to challenge the computer.",
     "controls": "Click or tap",
     "instructions": "Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield.",
     "image": "assets/images/medieval-rps.png"
   }
 };
+

@@ -1,13 +1,7 @@
-/* Display the selected game's layout.
-   Example URL: game.html?game=snake
-   This file does not start a game engine yet. */
-const query = new URLSearchParams(window.location.search);
+/* The URL chooses the game. Only implemented games are started. */
+const query = new URLSearchParams(location.search);
 const selectedGameId = query.get("game");
-
-// Only accept IDs that are explicitly listed in our own catalog.
-const selectedGame = Object.hasOwn(gameCatalog, selectedGameId)
-  ? gameCatalog[selectedGameId]
-  : null;
+const selectedGame = Object.hasOwn(gameCatalog, selectedGameId) ? gameCatalog[selectedGameId] : null;
 
 if (selectedGame) {
   document.title = selectedGame.title + " | Simple Code Games";
@@ -18,52 +12,35 @@ if (selectedGame) {
   document.querySelector("#stage-preview").src = selectedGame.image;
   document.querySelector("#game-layout").hidden = false;
 
-  if (selectedGameId === "doom") {
-    document.querySelector("#save-note").textContent =
-      "The future Doom runtime will manage its own saves. Profile-specific loading has not been tested or added.";
+  if (selectedGameId === "medieval-rps") {
+    // Remove the new-game flag so a refresh or profile switch restores the save.
+    const newGame = query.get("new") === "1";
+    query.delete("new");
+    history.replaceState(null, "", location.pathname + "?" + query.toString());
+    try {
+      const profile = Profiles.active();
+      window.currentGame = loadMedievalRPS(document.querySelector(".game-stage"), { newGame });
+      document.querySelector(".game-page-heading .eyebrow").textContent = "Choose your champion";
+      document.querySelector(".draft-badge").textContent = "Ready to play";
+      document.querySelector(".game-toolbar").textContent = "Profile: " + (profile?.username || "Guest");
+      document.querySelector(".instructions-panel h3").textContent = "Controls";
+      document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
+      document.querySelector("#save-note").textContent = profile
+        ? "One RPS save for this profile, updated after every round. Continue restores it. New game replaces it and keeps your leaderboard best."
+        : "Guest games are not saved or ranked. Use Profile to sign in or create a local profile.";
+      document.querySelector(".game-bottom-bar span").textContent = "Choose again to play another round.";
+      const button = document.querySelector(".game-bottom-bar button");
+      button.disabled = false;
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        try { await window.currentGame.reset(); }
+        catch (error) { showArcadeError(error.message); }
+        finally { button.disabled = false; }
+      });
+    } catch (error) { showArcadeError(error.message); }
   }
-   //Snake
-  if (selectedGameId === "snake"){
-    const snakeContainer = document.querySelector("#snake-container");
-      snakeContainer.hidden = false;
-      loadSnakeGame(snakeContainer);
-  } 
-   //snake
+  // Snake and the remaining titles are previews until their engines are added.
 } else if (selectedGameId) {
   document.querySelector("#game-title").textContent = "Game not found";
-  document.querySelector("#game-description").textContent =
-    "That game is not in this collection. Use All games to choose one of the six planned titles.";
-}
-// Start Medieval RPS when that game is selected.
-if (selectedGameId === "medieval-rps") {
-  const gameArea = document.querySelector(".game-stage");
-  loadMedievalRPS(gameArea);
-
-  // Update the old preview labels.
-  document.querySelector(".game-page-heading .eyebrow").textContent =
-    "Choose your champion";
-
-  document.querySelector(".draft-badge").textContent = "Ready to play";
-
-  document.querySelector("#save-note").textContent =
-    "Scores are kept for this visit only. Refreshing resets them.";
-
-  document.querySelector(".instructions-panel h3").textContent =
-    "Controls";
-
-  // Hide the unused preview score and Pause controls.
-  document.querySelector(".game-toolbar").style.display = "none";
-
-  document.querySelector(".game-bottom-bar span").textContent =
-    "Choose again to play another round.";
-
-  // Make the bottom New game button reset the scores.
-  const restartButton = document.querySelector(".game-bottom-bar button");
-  restartButton.disabled = false;
-
-  restartButton.onclick = function () {
-    if (window.confirm("Start a new game and reset your scores?")) {
-      loadMedievalRPS(gameArea);
-    }
-  };
+  document.querySelector("#game-description").textContent = "Use All games to choose a title.";
 }

@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Explore the six-game website design draft.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Medieval RPS with local profiles, saves, and leaderboards.">
   <title>Games | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/profiles.css">
   <script src="js/catalog.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/profiles.js" defer></script>
+  <script src="js/games/medieval-rps.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <!-- Shared header: keep this navigation consistent across all four pages. -->
+  <!-- Shared navigation across the five pages. -->
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
       <nav class="main-nav" aria-label="Main navigation">
         <a href="index.html" aria-current="page">Games</a>
+        <a href="leaderboards.html">Leaderboards</a>
         <a href="help.html">How to play</a>
         <a href="about.html">About</a>
       </nav>
@@ -27,9 +32,9 @@
   <main id="main-content" class="page-shell">
     <section class="catalog-intro" aria-labelledby="page-title">
       <div><p class="eyebrow">The small browser arcade</p><h1 id="page-title">Pick a game.</h1><p class="lead">Six familiar ideas. A quick break from the ordinary.</p></div>
-      <span class="draft-badge"><span aria-hidden="true"></span> Website design draft</span>
+      <span class="draft-badge"><span aria-hidden="true"></span> Medieval RPS is playable</span>
     </section>
-    <p class="preview-note">Explore the menus and game layouts. Playable games and saved progress are coming in a later update.</p>
+    <p class="preview-note">Play Medieval RPS, save your game under a local profile, and compete on this browser's leaderboards. More games are in development.</p>
     <section class="game-grid" aria-label="Game collection">
       <!-- Original Doom: the link still opens the layout when JavaScript is off. -->
       <a class="game-card doom" href="game.html?game=doom" data-game="doom" aria-label="Open Original Doom menu">
@@ -74,7 +79,7 @@
         <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
       </a>
     </section>
-    <p class="catalog-caption">Preview illustrations are shown here. Actual game screenshots will be added as development continues.</p>
+    <p class="catalog-caption">Medieval RPS shows an actual gameplay screenshot. Other previews are illustrations.</p>
     <noscript><p class="notice">JavaScript is off. The tiles still link to the game layout; menu and profile previews need JavaScript.</p></noscript>
   </main>
 
@@ -85,7 +90,7 @@
     <p id="menu-description"></p>
     <p class="menu-status">Layout preview <span>Gameplay coming later</span></p>
     <div class="menu-actions">
-      <button class="button" disabled>Continue</button>
+      <button class="button" id="continue-game-button" type="button" disabled>Continue</button>
       <button class="button" id="new-game-button" type="button" disabled>
   New game
 </button>
@@ -95,7 +100,7 @@
     <section id="menu-instructions" class="menu-instructions" hidden>
       <h3>How to play</h3><p id="instructions-text"></p><p><strong>Planned controls:</strong> <span id="controls-text"></span></p>
     </section>
-    <p class="small muted">Continue will be enabled only when a compatible saved run exists. No games are playable in this milestone.</p>
+    <p class="small muted">Continue will be enabled only when a compatible saved run exists. Medieval RPS is playable.</p>
   </dialog>
   <footer class="site-footer">
     <div class="footer-inner">
@@ -105,16 +110,7 @@
   </footer>
 
   <!-- Native dialogs support Escape, keyboard focus, and an accessible title. -->
-  <dialog id="profile-dialog" aria-labelledby="profile-title">
-    <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
-    <p class="eyebrow">Your corner of the arcade</p>
-    <h2 id="profile-title">Local profiles</h2>
-    <p>Separate names and saved progress are planned for a later milestone.</p>
-    <div class="profile-row"><span class="avatar" aria-hidden="true">G</span><div><strong>Guest</strong><br><span class="muted">Current preview profile</span></div><span class="selected-label">Selected</span></div>
-    <label for="profile-name">New profile name</label>
-    <input id="profile-name" type="text" placeholder="Available in a later update" disabled>
-    <button class="button full-width" disabled>Create profile</button>
-    <p class="small muted">This draft does not save names, scores, or game progress. Planned local profiles will stay in the browser where they are created.</p>
-  </dialog>
+  <dialog id="profile-dialog" aria-labelledby="profile-title"></dialog>
 </body>
 </html>
+

@@ -1,63 +1,144 @@
+/* Shared profile dialog, navigation and homepage game menus. */
+(() => {
+  const notice = document.createElement("p");
+  notice.className = "notice arcade-notice";
+  notice.setAttribute("role", "alert");
+  notice.hidden = true;
+  document.querySelector("main").prepend(notice);
+  window.showArcadeError = message => { notice.textContent = message; notice.hidden = false; };
+  if (location.protocol === "file:") {
+    showArcadeError("Open index.html with Live Server to use profiles, saves and leaderboards reliably.");
+  }
 
+  let active = null;
+  try { active = Profiles.active(); } catch (error) { showArcadeError(error.message); }
+  const dialog = document.querySelector("#profile-dialog");
+  dialog.innerHTML = `
+    <form method="dialog" class="dialog-close"><button aria-label="Close profiles">×</button></form>
+    <p class="eyebrow">Your corner of the arcade</p><h2 id="profile-title">Local profiles</h2>
+    <p id="active-profile-name"></p>
+    <button id="sign-out" type="button" class="button" hidden>Sign out</button>
+    <form id="login-form" class="profile-form">
+      <h3>Sign in or switch profile</h3>
+      <label for="login-name">Username</label>
+      <input id="login-name" name="username" required maxlength="20" autocomplete="username">
+      <label for="login-password">Password</label>
+      <input id="login-password" name="password" type="password" required maxlength="128" autocomplete="current-password">
+      <button class="button primary full-width" type="submit">Sign in</button>
+    </form>
+    <details class="profile-registration"><summary>Create a new profile</summary>
+      <form id="register-form" class="profile-form">
+        <label for="register-name">New username</label>
+        <input id="register-name" name="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" autocomplete="username" aria-describedby="username-help">
+        <p class="small muted" id="username-help">3 to 20 letters, numbers or underscores. Capitalization does not create a different username.</p>
+        <label for="register-password">New password (at least 8 characters)</label>
+        <input id="register-password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password">
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" name="confirm" type="password" required minlength="8" maxlength="128" autocomplete="new-password">
+        <button class="button primary full-width" type="submit">Create profile</button>
+      </form>
+    </details>
+    <p id="profile-message" role="status" aria-live="polite"></p>
+    <p class="small muted">Local to this browser and site address. These are not online accounts. Use a password you do not use elsewhere. There is no password recovery; clearing browser data removes profiles and saves.</p>`;
 
-// Native dialogs keep focus inside the menu and support the Escape key.
-const profileDialog = document.querySelector("#profile-dialog");
-
-document.querySelectorAll("[data-open-profile]").forEach(function (button) {
-  button.addEventListener("click", function () {
-    profileDialog.showModal();
+  const message = document.querySelector("#profile-message");
+  document.querySelector("#active-profile-name").textContent = active ? "Signed in as " + active.username : "Playing as Guest. Sign in to save and join leaderboards.";
+  document.querySelector("#sign-out").hidden = !active;
+  document.querySelectorAll("[data-open-profile]").forEach(button => {
+    button.textContent = "Profile: " + (active?.username || "Guest");
+    button.addEventListener("click", () => {
+      window.currentGame?.pause?.();
+      message.textContent = "";
+      dialog.showModal();
+    });
   });
-});
+  dialog.addEventListener("close", () => {
+    dialog.querySelectorAll('input[type="password"]').forEach(input => input.value = "");
+  });
 
-const gameDialog = document.querySelector("#game-dialog");
+  let profileBusy = false;
+  async function changeProfile(action) {
+    if (profileBusy) return;
+    profileBusy = true;
+    const buttons = dialog.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+    message.textContent = "Please wait...";
+    try {
+      await window.currentGame?.beforeLeave?.();
+      await action();
+      location.reload();
+    } catch (error) { message.textContent = error.message; }
+    finally { profileBusy = false; buttons.forEach(button => button.disabled = false); }
+  }
+  document.querySelector("#login-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const name = document.querySelector("#login-name").value;
+    const password = document.querySelector("#login-password").value;
+    changeProfile(async () => Profiles.setActive(await Profiles.authenticate(name, password)));
+  });
+  document.querySelector("#register-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const name = document.querySelector("#register-name").value;
+    const password = document.querySelector("#register-password").value;
+    if (password !== document.querySelector("#confirm-password").value) {
+      message.textContent = "The passwords do not match.";
+      return;
+    }
+    changeProfile(async () => Profiles.setActive(await Profiles.register(name, password)));
+  });
+  document.querySelector("#sign-out").addEventListener("click", () => changeProfile(() => Profiles.setActive(null)));
 
-// Only index.html has a game selection dialog.
-if (gameDialog) {
+  // Await any pending automatic save before following an ordinary site link.
+  document.addEventListener("click", async event => {
+    const link = event.target.closest("a[href]");
+    if (!link || !window.currentGame?.beforeLeave || event.defaultPrevented || event.button !== 0 ||
+        event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+        link.target === "_blank" || link.origin !== location.origin) return;
+    event.preventDefault();
+    try { await window.currentGame.beforeLeave(); location.assign(link.href); }
+    catch (error) { showArcadeError(error.message); }
+  });
+
+  const gameDialog = document.querySelector("#game-dialog");
+  if (!gameDialog) return;
   const instructionsButton = document.querySelector("#show-instructions");
   const instructionsPanel = document.querySelector("#menu-instructions");
-
-  document.querySelectorAll("[data-game]").forEach(function (tile) {
-    tile.addEventListener("click", function (event) {
-      const gameId = tile.dataset.game;
-      const game = gameCatalog[gameId];
-
-      if (!game) return; // Keep the normal link when no matching game exists.
+  document.querySelectorAll("[data-game]").forEach(tile => {
+    tile.addEventListener("click", event => {
+      const id = tile.dataset.game;
+      if (!Object.hasOwn(gameCatalog, id)) return;
       event.preventDefault();
-
+      const game = gameCatalog[id];
       document.querySelector("#menu-title").textContent = game.title;
       document.querySelector("#menu-description").textContent = game.description;
       document.querySelector("#instructions-text").textContent = game.instructions;
       document.querySelector("#controls-text").textContent = game.controls;
-      document.querySelector("#preview-link").href = "game.html?game=" + gameId;
-      // Enable New game for Medieval RPS.
-const rpsReady = gameId === "medieval-rps";
-const newGameButton = document.querySelector("#new-game-button");
-const previewLink = document.querySelector("#preview-link");
-
-newGameButton.disabled = !rpsReady;
-
-newGameButton.onclick = function () {
-  window.location.href = "game.html?game=" + gameId;
-};
-
-// RPS opens through New game. Unfinished games still show their previews.
-previewLink.style.display = rpsReady ? "none" : "";
-
-gameDialog.querySelector(".menu-status").textContent =
-  rpsReady ? "Ready to play" : "Gameplay coming later";
-
-gameDialog.querySelector(".small.muted").textContent =
-  rpsReady
-    ? "Start a fresh game. Scores are kept for this visit only."
-    : "This game is still in development.";
+      const newButton = document.querySelector("#new-game-button");
+      const continueButton = document.querySelector("#continue-game-button");
+      const preview = document.querySelector("#preview-link");
+      let saved = false;
+      let storageError = "";
+      try {
+        const profile = Profiles.active();
+        const record = profile && game.playable ? ArcadeStorage.getRecord(profile.id, id) : null;
+        saved = Boolean(record && id === "medieval-rps" && validRPSState(record.state));
+      } catch (error) { storageError = error.message; }
+      newButton.disabled = !game.playable;
+      continueButton.disabled = !saved;
+      newButton.onclick = () => location.assign("game.html?game=" + id + "&new=1");
+      continueButton.onclick = () => location.assign("game.html?game=" + id);
+      preview.href = "game.html?game=" + id;
+      preview.hidden = Boolean(game.playable);
+      gameDialog.querySelector(".menu-status").textContent = game.playable ? "Ready to play" : "In development";
+      gameDialog.querySelector(".small.muted").textContent = storageError ||
+        (game.playable ? (active ? "One save per profile. Continue restores it. New game can replace it; your leaderboard best stays." : "Guest games are not saved. Sign in through Profile to save your progress.") : "This game is still in development.");
       instructionsPanel.hidden = true;
       instructionsButton.setAttribute("aria-expanded", "false");
       gameDialog.showModal();
     });
   });
-
-  instructionsButton.addEventListener("click", function () {
+  instructionsButton.addEventListener("click", () => {
     instructionsPanel.hidden = !instructionsPanel.hidden;
     instructionsButton.setAttribute("aria-expanded", String(!instructionsPanel.hidden));
   });
-}
+})();
