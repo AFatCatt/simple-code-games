@@ -7,3 +7,8 @@
 .canvas-message p { margin: 5px 0 0; }
 .canvas-stage .save-error { color: #9c321e; }
 @media (max-width: 560px) { .canvas-stage { padding: 12px; } }
+
+.pong-touch { display: flex; gap: 12px; justify-content: center; margin: 12px 0; }
+.pong-touch .button { touch-action: none; user-select: none; min-width: 92px; min-height: 48px; }
+.pong-live { margin-top: 20px; }
+.pong-live #game-canvas { touch-action: manipulation; }

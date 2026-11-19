@@ -24,10 +24,14 @@ const gameCatalog = {
   },
   "pong": {
     "title": "Pong",
-    "description": "Keep the ball in play against a computer-controlled paddle.",
-    "controls": "Up and Down arrows",
-    "instructions": "Move your paddle with the Up and Down arrow keys. Return the ball and score when the computer misses. The match target will be set during development.",
-    "image": "assets/images/pong.svg"
+    "playable": true,
+    "leaderboardMetric": "Best consecutive-goal streak",
+    "storageId": "pong-streak",
+    "leaderboardOrder": "desc",
+    "description": "Play Victoria Mason’s Pong against the computer or another profile online.",
+    "controls": "Up/Down arrows or on-screen buttons · Esc to pause",
+    "instructions": "Move with Up and Down arrows or hold the on-screen buttons. Score through the white goal in the middle half of the opposite end wall. The rest of the wall bounces the ball. The first player to 10 points wins. Escape pauses or resumes singleplayer. The ball starts slower and gets 1.5 times faster on each paddle hit; walls never speed it up. Your leaderboard score is your best consecutive-goal streak. Conceding a goal resets the current streak, and Next match carries it forward. Restarting an unfinished solo match resets the current streak. Singleplayer has one saved match per profile. Multiplayer lets you host, join a room or find a random opponent. The host controls the left paddle and the guest controls the right. Both modes contribute their best streak to the same leaderboard; their active streaks stay separate.",
+    "image": "assets/images/pong.png"
   },
   "memory": {
     "title": "Memory Match",
@@ -57,7 +61,7 @@ const gameCatalog = {
     "leaderboardOrder": "desc",
     "description": "Choose Sword, Archer, Shield, Catapult, or Dragon to challenge the computer or another profile online.",
     "controls": "Click or tap",
-    "instructions": "Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield.",
+    "instructions": "Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield. Both singleplayer and multiplayer rank your best winning streak. A loss or tie resets the current streak. Each mode keeps its own active streak.",
     "image": "assets/images/medieval-rps.png"
   }
 };

@@ -129,14 +129,15 @@ window.arcadeAppReady = (async () => {
       let storageError = "";
       try {
         const profile = Profiles.active();
-        const record = profile && game.playable ? ArcadeStorage.getRecord(profile.id, id) : null;
+        const record = profile && game.playable ? (ArcadeStorage.getRecord(profile.id, id) || (id === "pong" ? ArcadeStorage.getLegacyPongRecord(profile.id) : null)) : null;
         saved = Boolean(record && (id === "medieval-rps" ? validRPSState(record.state) : id === "memory" ? MemoryMatch.valid(record.state) : id === "doom" ? DoomSave.valid(record.state) : CanvasSaves.valid(id, record.state)));
       } catch (error) { storageError = error.message; }
       newButton.disabled = !game.playable;
       const rpsOnline = document.querySelector("#online-rps-button");
-      rpsOnline.hidden = id !== "medieval-rps";
-      newButton.textContent = id === "medieval-rps" ? "New singleplayer game" : "New game";
-      continueButton.textContent = id === "medieval-rps" ? "Continue singleplayer" : "Continue";
+      rpsOnline.hidden = !["medieval-rps", "pong"].includes(id);
+      rpsOnline.href = id === "pong" ? "pong-multiplayer.html" : "multiplayer.html";
+      newButton.textContent = ["medieval-rps", "pong"].includes(id) ? "New singleplayer game" : "New game";
+      continueButton.textContent = ["medieval-rps", "pong"].includes(id) ? "Continue singleplayer" : "Continue";
       continueButton.disabled = !saved;
       newButton.onclick = () => location.assign("game.html?game=" + id + "&new=1");
       continueButton.onclick = () => location.assign("game.html?game=" + id);

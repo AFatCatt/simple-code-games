@@ -47,18 +47,24 @@ if (selectedGame) {
       });
     } catch (error) { showArcadeError(error.message); }
   }
-  if (selectedGameId === "snake" || selectedGameId === "circle-hop") {
+  if (selectedGameId === "snake" || selectedGameId === "circle-hop" || selectedGameId === "pong") {
     const newGame = query.get("new") === "1";
     query.delete("new");
     history.replaceState(null, "", location.pathname + "?" + query.toString());
     try {
       const profile = Profiles.active();
+      if (selectedGameId === "pong") {
+        const modes = document.createElement("nav"); modes.className = "rps-modes"; modes.setAttribute("aria-label", "Pong mode");
+        modes.innerHTML = '<a class="button" href="game.html?game=pong" aria-current="page">Singleplayer</a><a class="button" href="pong-multiplayer.html">Multiplayer</a>';
+        document.querySelector(".game-toolbar").before(modes);
+      }
       window.currentGame = loadCanvasGame(document.querySelector(".game-stage"), selectedGameId, { newGame });
-      document.querySelector(".game-page-heading .eyebrow").textContent = selectedGameId === "snake" ? "Collect. Grow. Repeat." : "One more jump";
+      document.querySelector(".game-page-heading .eyebrow").textContent = selectedGameId === "snake" ? "Collect. Grow. Repeat." : selectedGameId === "pong" ? "Pong by Victoria Mason · First to 10" : "One more jump";
       document.querySelector(".draft-badge").textContent = "Ready to play";
       document.querySelector(".game-toolbar").textContent = "Profile: " + (profile?.username || "Guest");
       document.querySelector(".instructions-panel h3").textContent = "Controls";
       document.querySelector("#save-note").textContent = profile ? "One save per profile on this device, updated automatically while playing and when paused. Continue restores your run paused. New game replaces it and keeps your leaderboard best." : "Guest games are not saved or ranked. Sign in through Profile before playing.";
+      if (profile && selectedGameId === "pong") document.querySelector("#save-note").textContent = "Your solo match saves on this device. Next match keeps your goal streak after a finished match. Restarting an unfinished match resets the current streak. Your best solo or online streak ranks on the shared leaderboard.";
       document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
       document.querySelector(".game-bottom-bar span").textContent = "Pause before taking a break. Saved games resume when you are ready.";
       const button = document.querySelector(".game-bottom-bar button");
@@ -92,7 +98,7 @@ if (selectedGame) {
       });
     } catch (e) { showArcadeError(e.message); }
   }
-  // Pong remains in development.
+
 } else if (selectedGameId) {
   document.querySelector("#game-title").textContent = "Game not found";
   document.querySelector("#game-description").textContent = "Use All games to choose a title.";

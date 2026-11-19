@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Pong, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
+  <title>Multiplayer Pong | Simple Code Games</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
+  <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
+  <script src="js/catalog.js?v=streaks-20261119" defer></script>
+  <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
+  <script src="js/online-config.js?v=online-20261119" defer></script>
+  <script src="js/online.js?v=cleanup-20261119" defer></script>
+  <script src="js/storage.js?v=streaks-20261119" defer></script>
+  <script src="js/profiles.js?v=cleanup-20261119" defer></script>
+  <script src="js/app.js?v=streaks-20261119" defer></script>
+  <script src="js/game-session.js?v=streaks-20261119" defer></script>
+  <script src="js/games/pong.js?v=streaks-20261119" defer></script>
+  <script src="js/pong-live.js?v=streaks-20261119" defer></script>
+  <script src="js/pong-multiplayer.js?v=streaks-20261119" defer></script>
+  <link rel="stylesheet" href="css/canvas-games.css?v=pong-online-20261119">
+  <link rel="stylesheet" href="css/game.css">
+  <link rel="stylesheet" href="css/rps-multiplayer.css?v=rps-rooms-20261119">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <!-- Shared navigation across the five pages. -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html">Games</a>
+        <a href="leaderboards.html">Leaderboards</a>
+        <a href="help.html">How to play</a>
+        <a href="about.html">About</a>
+      </nav>
+      <button class="profile-button" type="button" data-open-profile aria-haspopup="dialog">Profile: Guest</button>
+    </div>
+  </header>
+  <main id="main-content" class="page-shell">
+    <a class="back-link" href="index.html">← All games</a>
+    <p class="eyebrow">Pong by Victoria Mason</p><h1>Pong</h1>
+    <p class="lead">Two profiles. Two paddles. First to 10.</p>
+    <section class="rps-online-panel">
+      <nav class="rps-modes" aria-label="Pong mode"><a class="button" href="game.html?game=pong">Singleplayer</a><a class="button" href="pong-multiplayer.html" aria-current="page">Multiplayer</a></nav>
+      <div id="pong-online"><p role="status">Connecting to your profile...</p></div>
+    </section>
+    <details class="reading-width"><summary>How to play</summary><p>Move using Up/Down arrows or hold the on-screen buttons. The host controls the left paddle and the guest controls the right. Score through the white goal in the middle half of the opponent’s end wall. Shots outside the goal bounce back. First to 10 wins. Either player can pause; the host resumes when both players are connected.</p></details>
+    <noscript><p class="notice">Enable JavaScript to join an online room.</p></noscript>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>Simple Code Games <span class="footer-divider">/</span> A student web project</p>
+      <a href="about.html#credits">About and credits <span aria-hidden="true">↗</span></a>
+    </div>
+  </footer>
+
+  <!-- Native dialogs support Escape, keyboard focus, and an accessible title. -->
+  <dialog id="profile-dialog" aria-labelledby="profile-title"></dialog>
+</body>
+</html>
+

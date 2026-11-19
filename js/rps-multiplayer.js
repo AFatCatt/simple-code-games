@@ -28,12 +28,12 @@ window.rpsMultiplayerReady = (async () => {
     <section id="rps-room" hidden><h2 id="rps-room-title"></h2><p id="rps-room-access"></p>
       <p id="rps-players"></p><p id="rps-round"></p><p id="rps-readiness"></p>
       <div id="online-rps-choices" class="online-rps-choices"></div>
-      <p id="rps-room-result" class="rps-room-result" role="status"></p><p id="rps-room-score"></p>
+      <p id="rps-room-result" class="rps-room-result" role="status"></p><p id="rps-room-score"></p><p id="rps-room-streak"></p>
       <div class="rps-room-actions"><button id="rps-next" class="button primary" type="button" hidden>Next round</button>
         <button id="rps-refresh" class="button" type="button">Refresh room</button>
         <button id="rps-leave" class="button" type="button">Leave room</button></div></section>
     <p id="rps-network" class="small" role="status"></p>
-    <p class="small muted">Both picks stay hidden until locked in. The host starts the next round. Room wins are separate from singleplayer rankings. Rooms expire after two hours without a game action.</p>`;
+    <p class="small muted">Both picks stay hidden until locked in. The host starts the next round. Online winning streaks count on the RPS and Overall leaderboards. A loss or tie resets your current online streak. Your best from either mode is kept; their active streaks stay separate. Rooms expire after two hours without a game action.</p>`;
   const find = id => root.querySelector("#" + id), network = find("rps-network");
   const choices = { Sword: "⚔️", Archer: "🏹", Shield: "🛡️", Catapult: "🪨", Dragon: "🐉" };
   const key = "simple-code-games:rps-room:" + profile.id;
@@ -86,6 +86,9 @@ window.rpsMultiplayerReady = (async () => {
     setText(find("rps-round"), `Round ${room.round} · You are ${profile.username} (${room.role})`);
     setText(find("rps-readiness"), `Host: ${room.hostReady ? "choice locked" : "choosing"} | Guest: ${room.guestReady ? "choice locked" : "choosing"}`);
     setText(find("rps-room-score"), `${room.host}: ${room.hostWins} wins | ${room.guest || "Guest"}: ${room.guestWins} wins | Ties: ${room.ties}`);
+    setText(find("rps-room-streak"), Number.isInteger(room.hostStreak)
+      ? `Online streaks: ${room.host}: ${room.hostStreak} | ${room.guest || "Guest"}: ${room.guestStreak} · Online best: ${room.hostBest} / ${room.guestBest}`
+      : "Online ranking needs the site’s latest leaderboard setup (05-ranked-multiplayer.sql).");
     const result = find("rps-room-result");
     if (room.closed) setText(result, "This room was closed or expired. Host a new room or join another.");
     else if (room.outcome) setText(result, `${room.host} chose ${room.hostPick}. ${room.guest} chose ${room.guestPick}. ${room.outcome === "tie" ? "It is a tie!" : room[room.outcome] + " wins!"}`);

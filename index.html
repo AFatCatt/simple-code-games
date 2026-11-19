@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Pong, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>Games | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
   <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
-  <script src="js/catalog.js?v=memory-100cards-preview60-20261119" defer></script>
+  <script src="js/catalog.js?v=streaks-20261119" defer></script>
   <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
   <script src="js/online-config.js?v=online-20261119" defer></script>
   <script src="js/online.js?v=cleanup-20261119" defer></script>
-  <script src="js/storage.js?v=sync-flicker-fix-20261119" defer></script>
+  <script src="js/storage.js?v=streaks-20261119" defer></script>
   <script src="js/profiles.js?v=cleanup-20261119" defer></script>
   <script src="js/games/memory.js?v=memory-100cards-preview60-20261119" defer></script>
   <script src="js/games/medieval-rps.js" defer></script>
   <script src="js/games/doom.js" defer></script>
   <script src="js/games/snake.js?v=bombs-shapes-20261119" defer></script>
   <script src="js/games/circle-hop.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/game-session.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/app.js?v=games-revision-20261119" defer></script>
+  <script src="js/game-session.js?v=streaks-20261119" defer></script>
+  <script src="js/app.js?v=streaks-20261119" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -42,7 +42,7 @@
       <div><p class="eyebrow">The small browser arcade</p><h1 id="page-title">Pick a game.</h1><p class="lead">Six familiar ideas. A quick break from the ordinary.</p></div>
       <span class="draft-badge"><span aria-hidden="true"></span> Five games are playable</span>
     </section>
-    <p class="preview-note">Play Doom, Snake, Circle Hop, Memory Match or Medieval RPS, use your profile on any device, save your game locally, and compete on shared leaderboards. More games are in development.</p>
+    <p class="preview-note">Play Doom, Snake, Pong, Circle Hop, Memory Match or Medieval RPS, use your profile on any device, save your game locally, and compete on shared leaderboards. Choose singleplayer or online multiplayer for Pong and Medieval RPS.</p>
     <section class="game-grid" aria-label="Game collection">
       <!-- Original Doom: the link still opens the layout when JavaScript is off. -->
       <a class="game-card doom" href="game.html?game=doom" data-game="doom" aria-label="Open Original Doom menu">
@@ -62,7 +62,7 @@
       <a class="game-card pong" href="game.html?game=pong" data-game="pong" aria-label="Open Pong menu">
         <div class="card-heading"><h2>Pong</h2><span class="game-number" aria-hidden="true">03</span></div>
         <p class="card-tagline">A little friendly competition</p>
-        <img class="game-thumbnail" src="assets/images/pong.svg" alt="" width="360" height="220">
+        <img class="game-thumbnail" src="assets/images/pong.png" alt="" width="360" height="220">
         <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
       </a>
       <!-- Memory Match: the link still opens the layout when JavaScript is off. -->
@@ -87,7 +87,7 @@
         <div class="card-footer"><span>Open menu</span><span class="arrow" aria-hidden="true">↗</span></div>
       </a>
     </section>
-    <p class="catalog-caption">Doom, Snake, Circle Hop and Medieval RPS show their actual game graphics. Memory Match has an illustration based on its cards; Pong's preview is a placeholder.</p>
+    <p class="catalog-caption">Doom, Snake, Circle Hop and Medieval RPS show their actual game graphics. Memory Match and Pong use illustrations based on their game designs.</p>
     <noscript><p class="notice">JavaScript is off. The tiles still link to the game layout; menu and profile previews need JavaScript.</p></noscript>
   </main>
 

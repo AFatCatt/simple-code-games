@@ -42,6 +42,8 @@ const ArcadeStorage = (() => {
     return profileId + ":" + (gameCatalog[gameId].storageId || gameId);
   }
   function getRecord(profileId,gameId) { return read().games[gameKey(profileId,gameId)] || null; }
+  // Read the old checkpoint without interpreting match points as streaks.
+  function getLegacyPongRecord(profileId) { return read().games[profileId + ":pong"] || null; }
   function syncSoon() {
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => flushScores().catch(() => {}),1000);
@@ -124,5 +126,5 @@ const ArcadeStorage = (() => {
   }
   window.addEventListener("online",() => flushScores({ force: true }).catch(() => {}));
   setInterval(() => flushScores().catch(() => {}),15000);
-  return { getRecord,saveGame,flushScores,getSyncError };
+  return { getRecord,getLegacyPongRecord,saveGame,flushScores,getSyncError };
 })();

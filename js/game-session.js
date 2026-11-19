@@ -1,4 +1,5 @@
 /* Connect Victoria's canvas games to the shared profile database. */
+const PONG_SPEED_MULTIPLIER = 1.15;
 const CanvasSaves = {
   valid(id, s) {
     if (!s || ![1, 2].includes(s.version) || s.game !== id) return false;
@@ -16,6 +17,28 @@ const CanvasSaves = {
         !occupied.has(s.bomb.x + ":" + s.bomb.y) && s.food && (s.bomb.x !== s.food.x || s.bomb.y !== s.food.y));
       return validBomb && occupied.size === s.snake.length && (s.food === null ? s.snake.length === 400 : cell(s.food) && !occupied.has(s.food.x + ":" + s.food.y));
     }
+    if (id === "pong") {
+      const count = n => Number.isInteger(n) && n >= 0 && n <= 10;
+      const streak = n => Number.isSafeInteger(n) && n >= 0 && n <= 1e9;
+      const ended = s.playerScore === 10 || s.computerScore === 10;
+      const common = ["ready", "playing", "paused", "over", "scoring"].includes(s.phase) &&
+        count(s.playerScore) && count(s.computerScore) &&
+        !(s.playerScore === 10 && s.computerScore === 10) && (s.phase === "over") === ended &&
+        (s.phase !== "ready" || (s.playerScore === 0 && s.computerScore === 0)) &&
+        number(s.playerY, 0, 278) && number(s.computerY, 0, 278) && s.ball && s.ball.size === 10 &&
+        number(s.ball.x, -10, 640) && number(s.ball.y, 0, 350);
+      if (!common) return false;
+      if (s.version === 1) return s.score === s.playerScore && s.phase !== "scoring" &&
+        number(Math.abs(s.ball.dx), 260, 800) && Math.abs(s.ball.dy) === 160;
+      const scale = PONG_SPEED_MULTIPLIER ** s.ball.hits;
+      return [s.playerStreak, s.computerStreak, s.bestStreak, s.opponentBestStreak].every(streak) &&
+        s.bestStreak >= s.playerStreak && s.opponentBestStreak >= s.computerStreak && s.score === s.bestStreak &&
+        Number.isInteger(s.matchNumber) && s.matchNumber >= 0 && s.matchNumber <= 1000000 &&
+        Number.isInteger(s.ball.hits) && s.ball.hits >= 0 && s.ball.hits <= 1000 &&
+        Number.isFinite(s.ball.dx) && Number.isFinite(s.ball.dy) &&
+        Math.abs(Math.abs(s.ball.dx) / (220 * scale) - 1) < 1e-8 &&
+        Math.abs(Math.abs(s.ball.dy) / (120 * scale) - 1) < 1e-8;
+    }
     if (id === "circle-hop") {
       return ["ready", "playing", "paused", "over"].includes(s.phase) && number(s.score, 0, 1e9) &&
         (s.version === 1 ? number(s.speed, 220, 360) : s.speed === 220 + Math.floor(s.score / 100) * 12) && number(s.spawnCountdown, -0.1, 1.81) &&
@@ -30,17 +53,20 @@ const CanvasSaves = {
 };
 
 function loadCanvasGame(container, id, options = {}) {
-  const profile = Profiles.active(), record = profile ? ArcadeStorage.getRecord(profile.id, id) : null;
+  const profile = Profiles.active(), currentRecord = profile ? ArcadeStorage.getRecord(profile.id, id) : null;
+  const legacy = id === "pong" && profile && !currentRecord ? ArcadeStorage.getLegacyPongRecord(profile.id) : null;
+  const record = currentRecord || legacy;
   let fresh = Boolean(options.newGame);
   if (fresh && record && !confirm("Replace this profile's saved " + gameCatalog[id].title + " game? Its leaderboard best will stay.")) fresh = false;
   if (record && !fresh && !CanvasSaves.valid(id, record.state)) throw new Error("This saved game is incompatible. Use New game to replace it.");
-  let revision = record?.revision || 0, engine = null, pending = null, dirty = fresh, generation = 0, blocked = false;
+  let revision = currentRecord?.revision || 0, engine = null, pending = null, dirty = fresh || Boolean(legacy), generation = 0, blocked = false;
   const snake = id === "snake";
   container.className = "canvas-stage";
   container.innerHTML = `<div class="canvas-controls"><strong id="score-display">Score: 0</strong>
     <button id="pause-button" class="button compact" type="button" disabled>Pause</button>
     <button id="new-game-button" class="button compact" type="button">Start game</button></div>
     <canvas id="game-canvas" width="${snake ? 400 : 640}" height="${snake ? 400 : 360}" tabindex="0" aria-label="${gameCatalog[id].title} game board"></canvas>
+    ${id === "pong" ? '<p id="pong-streak" class="small"></p><div class="pong-touch"><button class="button" type="button" data-pong-direction="-1" aria-label="Move paddle up">Up</button><button class="button" type="button" data-pong-direction="1" aria-label="Move paddle down">Down</button></div>' : ''}
     ${snake ? '<p id="snake-bomb-note" class="small" role="status"></p>' : ''}
     <div id="stage-message" class="canvas-message" role="status"><strong id="announcement"></strong><p id="stage-copy"></p></div>
     <p id="game-state" class="small">Game state: ready</p>
@@ -79,19 +105,24 @@ function loadCanvasGame(container, id, options = {}) {
   }
   async function reset() {
     await beforeLeave();
-    if (engine.getState().phase !== "ready" && !confirm("Start a new game and replace this save? Your leaderboard best will stay.")) return;
+    const phase = engine.getState().phase;
+    if (phase !== "ready" && !(id === "pong" && phase === "over") && !confirm(
+      id === "pong" ? "Restart this unfinished match? Your current goal streak resets, but your best stays."
+      : "Start a new game and replace this save? Your leaderboard best will stay.")) return;
     blocked = false; engine.reset();
     container.querySelector("canvas").focus();
     await persist();
   }
-  const create = snake ? loadSnakeGame : loadCircleHopGame;
+  const create = snake ? loadSnakeGame : id === "pong" ? loadPongGame : loadCircleHopGame;
   engine = create(container, false, {
     initialState: record && !fresh ? record.state : null,
+    initialStreak: id === "pong" && fresh && record?.state?.version === 2 && record.state.phase === "over" ? record.state.playerStreak : 0,
+    initialBest: id === "pong" ? currentRecord?.best || 0 : 0,
     onChange: changed, onRequestNewGame: () => reset().catch(report)
   });
   status.textContent = profile ? (record && !fresh ? "Save restored for " + profile.username + "." : "Progress saves automatically for " + profile.username + ".")
     : "Guest game: progress and scores are not saved. Sign in before playing to save.";
-  if (fresh) persist().catch(report);
+  if (dirty) persist().catch(report);
   const autosave = setInterval(() => { if (dirty && !blocked) persist().catch(report); }, 1000);
   const pause = () => { engine.pause(); if (dirty && !blocked) persist().catch(report); };
   const visibility = () => { if (document.hidden) pause(); };

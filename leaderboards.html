@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Pong, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>Leaderboards | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
   <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
-  <script src="js/catalog.js?v=memory-100cards-preview60-20261119" defer></script>
+  <script src="js/catalog.js?v=streaks-20261119" defer></script>
   <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
   <script src="js/online-config.js?v=online-20261119" defer></script>
   <script src="js/online.js?v=cleanup-20261119" defer></script>
-  <script src="js/storage.js?v=sync-flicker-fix-20261119" defer></script>
+  <script src="js/storage.js?v=streaks-20261119" defer></script>
   <script src="js/profiles.js?v=cleanup-20261119" defer></script>
-  <script src="js/app.js?v=games-revision-20261119" defer></script>
+  <script src="js/app.js?v=streaks-20261119" defer></script>
   <script src="js/leaderboards.js?v=sync-flicker-fix-20261119" defer></script>
 </head>
 <body>
@@ -36,7 +36,7 @@
     <p class="eyebrow">Friendly competition</p>
     <h1>Leaderboards</h1>
     <p class="lead">Top 50 players across all devices. Scores refresh every 30 seconds.</p>
-    <p class="muted">Shared scores from all devices. Play while signed in to take part. Doom ranks most kills in one level. RPS ranks best winning streaks. Snake and Circle Hop rank high scores. Memory Match ranks the most pairs in one survival run.</p>
+    <p class="muted">Shared scores from all devices. Play while signed in to take part. Doom ranks most kills in one level. RPS ranks best winning streaks. Snake and Circle Hop rank high scores. Memory Match ranks the most pairs in one survival run. Pong ranks your best consecutive-goal streak. RPS and Pong include both singleplayer and multiplayer results.</p>
     <div id="leaderboard-tabs" class="leaderboard-tabs" role="tablist" aria-label="Choose a leaderboard"></div>
     <section id="leaderboard-panel" class="leaderboard-panel" role="tabpanel" tabindex="0"></section>
     <noscript><p class="notice">Enable JavaScript to display shared leaderboards.</p></noscript>
