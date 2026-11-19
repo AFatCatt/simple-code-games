@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>About | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
   <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
-  <script src="js/catalog.js?v=bombs-shapes-20261119" defer></script>
+  <script src="js/catalog.js?v=games-revision-20261119" defer></script>
   <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
   <script src="js/online-config.js?v=online-20261119" defer></script>
   <script src="js/online.js?v=cleanup-20261119" defer></script>
-  <script src="js/storage.js?v=cleanup-20261119" defer></script>
+  <script src="js/storage.js?v=games-revision-20261119" defer></script>
   <script src="js/profiles.js?v=cleanup-20261119" defer></script>
-  <script src="js/app.js?v=cleanup-20261119" defer></script>
+  <script src="js/app.js?v=games-revision-20261119" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <!-- Shared navigation across the five pages. -->
+  <!-- Shared site navigation. -->
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span> Simple Code Games</a>
@@ -32,12 +32,20 @@
     </div>
   </header>
   <main id="main-content" class="page-shell reading-page">
-    <p class="eyebrow">A project with room to expand</p><h1>About Simple Code Games</h1>
-    <p class="lead">A small collection of browser games for students, casual players, and anyone taking a short break.</p>
-    <section class="content-section"><h2>What we are making</h2><p>Simple Code Games brings Original Doom, Snake, Pong, Memory Match, Circle Hop, and Medieval RPS into one consistent website. Choose a tile, learn the controls, and enter a shared game layout.</p><p>The goal is quick, understandable access to familiar games while practicing web programming and basic game design.</p></section>
-    <section class="content-section"><h2>Meet the team</h2><p>Ian Catterton and Victoria Mason are Computer Information Sciences students at Shepherd University. This website is a project for CIS 332 Web Programming, Fall 2026.</p></section>
-    <section class="content-section"><h2>Where the project stands</h2><p>Original Doom (shareware Episode 1), Snake, Circle Hop, and Medieval RPS are playable. Online profiles have globally unique usernames and passwords. Best scores appear on shared leaderboards, with the top 50 shown for each game and Overall. One game checkpoint per profile stays on each device. Pong and Memory Match are still in development.</p><p>Vue 3 is planned for a later stage. This initial draft uses ordinary HTML, external CSS, and a moderate amount of JavaScript for navigation, menus and game implementation.</p></section>
-    <section class="content-section"><h2>Game contributions</h2><p>Victoria Mason implemented the Snake and Circle Hop gameplay. Both games are now connected to the shared profile saves, pause controls, and leaderboards.</p></section>
+    <p class="eyebrow">Built for a quick game</p>
+    <h1>About Simple Code Games</h1>
+    <p class="lead">A collection of browser games made for students, casual players, and anyone taking a short break.</p>
+    <section class="content-section"><h2>Meet the team</h2><p>Ian Catterton and Victoria Mason are Computer Information Sciences students at Shepherd University. This website is a project for CIS 332 Web Programming, Fall 2026.</p><p>Victoria implemented the Snake and Circle Hop gameplay. The games share the site's profile, save and leaderboard features.</p></section>
+    <section class="content-section"><h2>What you can play</h2>
+      <ul>
+        <li><strong>Original Doom:</strong> play the original shareware Episode 1 in your browser.</li>
+        <li><strong>Snake:</strong> collect apples, wrap around the edges, and watch for bombs every ten apples.</li>
+        <li><strong>Circle Hop:</strong> jump over different shapes as the pace increases every 100 points.</li>
+        <li><strong>Memory Match:</strong> memorize 2, 4, 6 and eventually 16 cards, then match pairs without a mistake. Clear a full board to shuffle another and continue the same score.</li>
+        <li><strong>Medieval RPS:</strong> choose Sword, Archer, Shield, Catapult or Dragon. Each choice beats two others.</li>
+      </ul><p>Medieval RPS also offers online multiplayer. Browse rooms, join a random public opponent, or host with an optional password. Both players lock their choices before the result is revealed. Room wins are separate from singleplayer streak rankings.</p><p>Pong is still in development.</p></section>
+    <section class="content-section"><h2>Profiles, saves and leaderboards</h2><p>Create a profile with a unique username and password, then sign in on another device to use the same account and see shared best scores. Each game has its own leaderboard showing up to 50 players. The Overall leaderboard awards placement points across the supported games.</p><p>Each profile has one local save slot per game on each device. Your best scores sync online, while singleplayer checkpoints stay in the browser where you played. Guest games are not saved or ranked.</p></section>
+    <section class="content-section"><h2>How the website is built</h2><p>The site uses HTML, external CSS and JavaScript for its pages, menus and browser games. GitHub Pages hosts the website. Supabase provides online authentication, profiles and shared leaderboards.</p><p>The project brings together web programming, game logic, accessible controls and database features in one collection.</p></section>
     <section class="content-section" id="credits"><h2>Credits and assets</h2><p>Doom, Snake, Circle Hop and Medieval RPS use images from their actual game rendering. Pong and Memory Match still use vector illustrations as placeholders.</p><p>DOOM is a game by id Software. This site runs the open-source doomgeneric engine, modified for one profile save and local scoring, with the original shareware Episode 1 data. The full paid game is not included. Music uses FreePats instrument samples. Engine source is GPL-2.0-or-later; the game data has its own terms. <a href="source/doom-source.zip" download>Download the modified engine source</a>. <a href="licenses/README.md">Sources and licenses</a>.</p></section>
     <a class="button primary" href="index.html">Explore the game collection →</a>
   </main>

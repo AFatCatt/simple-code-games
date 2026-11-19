@@ -16,6 +16,11 @@ if (selectedGame) {
 
   if (selectedGameId === "medieval-rps" || selectedGameId === "doom") {
     const isDoom = selectedGameId === "doom";
+    if (!isDoom) {
+      const modes = document.createElement("nav"); modes.className = "rps-modes"; modes.setAttribute("aria-label", "RPS mode");
+      modes.innerHTML = '<a class="button" href="game.html?game=medieval-rps" aria-current="page">Singleplayer</a><a class="button" href="multiplayer.html">Multiplayer</a>';
+      document.querySelector(".game-toolbar").before(modes);
+    }
     // Remove the new-game flag so a refresh or profile switch restores the save.
     const newGame = query.get("new") === "1";
     query.delete("new");
@@ -65,7 +70,29 @@ if (selectedGame) {
       });
     } catch (error) { showArcadeError(error.message); }
   }
-  // Pong and Memory Match remain in development.
+  if (selectedGameId === "memory") {
+    const newGame = query.get("new") === "1";
+    query.delete("new"); history.replaceState(null, "", location.pathname + "?" + query.toString());
+    try {
+      window.currentGame = loadMemoryMatch(document.querySelector(".game-stage"), { newGame });
+      document.querySelector(".game-page-heading .eyebrow").textContent = "One mistake ends the run.";
+      document.querySelector(".draft-badge").textContent = "Ready to play";
+      document.querySelector(".game-toolbar").textContent = "Profile: " + (Profiles.active()?.username || "Guest");
+      document.querySelector(".instructions-panel h3").textContent = "Controls";
+      document.querySelector(".instructions-panel .text-link").textContent = "Game guide →";
+      document.querySelector("#save-note").textContent = Profiles.active()
+        ? "One run saved for this profile on this device. Continue restores your stage and score. New game starts from two cards and keeps your best run."
+        : "Guest games are not saved or ranked. Sign in through Profile to save.";
+      document.querySelector(".game-bottom-bar span").textContent = "Match pairs without a mistake. Continue keeps your score.";
+      const button = document.querySelector(".game-bottom-bar button"); button.disabled = false;
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        try { await currentGame.reset(); } catch (e) { showArcadeError(e.message); }
+        finally { button.disabled = false; }
+      });
+    } catch (e) { showArcadeError(e.message); }
+  }
+  // Pong remains in development.
 } else if (selectedGameId) {
   document.querySelector("#game-title").textContent = "Game not found";
   document.querySelector("#game-description").textContent = "Use All games to choose a title.";

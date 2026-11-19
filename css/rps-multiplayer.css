@@ -1,0 +1,18 @@
+.rps-modes { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 20px; background: #fffaf0; border-bottom: 1px solid var(--line); }
+.rps-modes [aria-current="page"] { background: #49321f; border-color: #49321f; color: white; }
+.rps-online-panel { max-width: 900px; margin: 28px auto; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+#rps-online { padding: 28px; background: linear-gradient(#f7f0e3, #e9dcc5); text-align: center; color: #39291e; }
+.rps-host-form, .rps-password-form { padding: 20px; border: 1px solid #b89b76; border-radius: 12px; background: #fffaf0; max-width: 460px; margin: 24px auto; text-align: left; }
+.rps-host-form label, .rps-password-form label { display: block; font-weight: bold; }
+.rps-host-form input, .rps-password-form input { width: 100%; margin: 8px 0 12px; min-height: 44px; border: 1px solid #b89b76; border-radius: 6px; padding: 10px; font: inherit; }
+.rps-room-list { padding: 0; margin: 20px 0; list-style: none; text-align: left; }
+.rps-room-list li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px; margin-bottom: 10px; border: 1px solid #b89b76; border-radius: 12px; background: #fffaf0; }
+.rps-room-list strong, .rps-room-list span { display: block; overflow-wrap: anywhere; }
+.rps-room-list .button { flex-shrink: 0; }
+.online-rps-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 12px; margin: 24px 0; }
+.online-rps-choices .button { flex-direction: column; min-height: 120px; background: #fffaf0; color: #49321f; border: 2px solid #b89b76; }
+.online-rps-choices .button:disabled { opacity: .65; }
+.rps-room-result { padding: 22px; border-radius: 10px; background: #49321f; color: #fffaf0; min-height: 95px; display: grid; place-items: center; }
+.rps-room-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+#rps-network { overflow-wrap: anywhere; }
+@media (max-width: 560px) { #rps-online { padding: 22px 12px; } .online-rps-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

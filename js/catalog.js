@@ -31,9 +31,13 @@ const gameCatalog = {
   },
   "memory": {
     "title": "Memory Match",
-    "description": "Turn over cards and match every pair in as few moves as possible.",
+    "playable": true,
+    "leaderboardMetric": "Most pairs in one run",
+    "storageId": "memory-run",
+    "leaderboardOrder": "desc",
+    "description": "Memorize the cards, match pairs, and keep your run alive.",
     "controls": "Click or tap",
-    "instructions": "Select two cards to reveal them. Matching cards stay face up; different cards turn back over. Match every pair to finish the board.",
+    "instructions": "Cards are shown for four seconds, then turn over. Match two cards at a time. One wrong pair ends the run. Start with 2 cards, then clear 4, 6, 8, 10, 12, 14 and 16. Continue after a full board to shuffle another 16-card board while keeping your score. Each matched pair earns one point. Your best run ranks on the leaderboard.",
     "image": "assets/images/memory.svg"
   },
   "circle-hop": {
@@ -51,7 +55,7 @@ const gameCatalog = {
     "playable": true,
     "leaderboardMetric": "Best winning streak",
     "leaderboardOrder": "desc",
-    "description": "Choose Sword, Archer, Shield, Catapult, or Dragon to challenge the computer.",
+    "description": "Choose Sword, Archer, Shield, Catapult, or Dragon to challenge the computer or another profile online.",
     "controls": "Click or tap",
     "instructions": "Each choice beats two others and loses to two. Identical choices tie. Sword beats Archer and Catapult. Archer beats Catapult and Dragon. Shield beats Sword and Archer. Catapult beats Shield and Dragon. Dragon beats Sword and Shield.",
     "image": "assets/images/medieval-rps.png"

@@ -30,7 +30,7 @@ const ArcadeStorage = (() => {
   }
   function gameKey(profileId,gameId) {
     if (!Object.hasOwn(gameCatalog,gameId)) throw new Error("Unknown game.");
-    return profileId + ":" + gameId;
+    return profileId + ":" + (gameCatalog[gameId].storageId || gameId);
   }
   function getRecord(profileId,gameId) { return read().games[gameKey(profileId,gameId)] || null; }
   function syncSoon() {
@@ -67,7 +67,7 @@ const ArcadeStorage = (() => {
           const key = gameKey(profile.id,id), record = db.games[key];
           if (record?.best == null || (record.syncedBest != null && record.best <= record.syncedBest)) continue;
           if (Profiles.active()?.id !== profile.id) break;
-          const { data, error } = await ArcadeOnline.requireClient().rpc("arcade_submit_score",{ p_game:id, p_score:record.best, p_expected_profile:profile.id });
+          const { data, error } = await ArcadeOnline.requireClient().rpc("arcade_submit_score",{ p_game:game.storageId || id, p_score:record.best, p_expected_profile:profile.id });
           if (error) throw error;
           if (!Number.isSafeInteger(data) || data < record.best) throw new Error("Invalid leaderboard response.");
           await update(latest => {
@@ -78,7 +78,11 @@ const ArcadeStorage = (() => {
           });
         }
         const latest = read();
-        const stillPending = Object.entries(latest.games).some(([key,r]) => key.startsWith(profile.id + ":") && r.best !== null && (r.syncedBest == null || r.best > r.syncedBest));
+        const stillPending = Object.entries(gameCatalog).some(([id, game]) => {
+          if (!game.playable || !game.leaderboardMetric) return false;
+          const r = latest.games[gameKey(profile.id, id)];
+          return r?.best != null && (r.syncedBest == null || r.best > r.syncedBest);
+        });
         if (stillPending) { ArcadeOnline.reportSync("Game saved. Syncing the latest best score..."); syncSoon(); }
         else ArcadeOnline.reportSync("Best scores synced online.");
       } catch (error) {

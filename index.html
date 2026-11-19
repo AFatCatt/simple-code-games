@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
+  <meta name="description" content="Simple Code Games is a student browser game collection. Play Doom, Snake, Circle Hop, Memory Match and Medieval RPS with online profiles, shared leaderboards, and local game saves.">
   <title>Games | Simple Code Games</title>
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css?v=cleanup-20261119">
   <link rel="stylesheet" href="css/profiles.css?v=cleanup-20261119">
-  <script src="js/catalog.js?v=bombs-shapes-20261119" defer></script>
+  <script src="js/catalog.js?v=games-revision-20261119" defer></script>
   <script src="assets/vendor/supabase/supabase-2.119.2.js" defer></script>
   <script src="js/online-config.js?v=online-20261119" defer></script>
   <script src="js/online.js?v=cleanup-20261119" defer></script>
-  <script src="js/storage.js?v=cleanup-20261119" defer></script>
+  <script src="js/storage.js?v=games-revision-20261119" defer></script>
   <script src="js/profiles.js?v=cleanup-20261119" defer></script>
+  <script src="js/games/memory.js?v=memory-run-20261119" defer></script>
   <script src="js/games/medieval-rps.js" defer></script>
   <script src="js/games/doom.js" defer></script>
   <script src="js/games/snake.js?v=bombs-shapes-20261119" defer></script>
   <script src="js/games/circle-hop.js?v=bombs-shapes-20261119" defer></script>
   <script src="js/game-session.js?v=bombs-shapes-20261119" defer></script>
-  <script src="js/app.js?v=cleanup-20261119" defer></script>
+  <script src="js/app.js?v=games-revision-20261119" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -39,9 +40,9 @@
   <main id="main-content" class="page-shell">
     <section class="catalog-intro" aria-labelledby="page-title">
       <div><p class="eyebrow">The small browser arcade</p><h1 id="page-title">Pick a game.</h1><p class="lead">Six familiar ideas. A quick break from the ordinary.</p></div>
-      <span class="draft-badge"><span aria-hidden="true"></span> Four games are playable</span>
+      <span class="draft-badge"><span aria-hidden="true"></span> Five games are playable</span>
     </section>
-    <p class="preview-note">Play Doom, Snake, Circle Hop or Medieval RPS, use your profile on any device, save your game locally, and compete on shared leaderboards. More games are in development.</p>
+    <p class="preview-note">Play Doom, Snake, Circle Hop, Memory Match or Medieval RPS, use your profile on any device, save your game locally, and compete on shared leaderboards. More games are in development.</p>
     <section class="game-grid" aria-label="Game collection">
       <!-- Original Doom: the link still opens the layout when JavaScript is off. -->
       <a class="game-card doom" href="game.html?game=doom" data-game="doom" aria-label="Open Original Doom menu">
@@ -102,12 +103,13 @@
   New game
 </button>
       <a class="button primary" id="preview-link" href="game.html">View game layout <span aria-hidden="true">→</span></a>
+      <a class="button" id="online-rps-button" href="multiplayer.html" hidden>Multiplayer</a>
       <button class="button" id="show-instructions" type="button" aria-expanded="false" aria-controls="menu-instructions">Instructions</button>
     </div>
     <section id="menu-instructions" class="menu-instructions" hidden>
       <h3>How to play</h3><p id="instructions-text"></p><p><strong>Planned controls:</strong> <span id="controls-text"></span></p>
     </section>
-    <p class="small muted">Continue will be enabled only when a compatible saved run exists. Four games are playable.</p>
+    <p class="small muted">Continue will be enabled only when a compatible saved run exists. Five games are playable.</p>
   </dialog>
   <footer class="site-footer">
     <div class="footer-inner">

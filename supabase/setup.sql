@@ -12,11 +12,15 @@ create unique index if not exists arcade_username_unique on public.arcade_profil
 
 create table if not exists public.arcade_scores (
   profile_id uuid not null references public.arcade_profiles(id) on delete cascade,
-  game_id text not null check (game_id in ('doom','snake','circle-hop','medieval-rps')),
+  game_id text not null check (game_id in ('doom','snake','circle-hop','medieval-rps','memory','memory-run')),
   best bigint not null check (best between 0 and 1000000000),
   updated_at timestamptz not null default now(),
   primary key (profile_id, game_id)
 );
+alter table public.arcade_scores drop constraint if exists arcade_scores_game_id_check;
+alter table public.arcade_scores add constraint arcade_scores_game_id_check
+  check (game_id in ('doom','snake','circle-hop','medieval-rps','memory','memory-run'));
+
 create index if not exists arcade_score_ranking on public.arcade_scores (game_id, best desc);
 
 alter table public.arcade_profiles enable row level security;
@@ -69,8 +73,9 @@ returns bigint language plpgsql security definer set search_path = '' as $$
 declare player_id uuid := auth.uid(); saved_best bigint;
 begin
   if player_id is null or p_expected_profile is distinct from player_id then raise exception 'Sign in before submitting scores.' using errcode = '42501'; end if;
-  if p_game is null or p_game not in ('doom','snake','circle-hop','medieval-rps')
-     or p_score is null or p_score < 0 or p_score > 1000000000 then
+  if p_game is null or p_game not in ('doom','snake','circle-hop','medieval-rps','memory-run')
+     or p_score is null or p_score < 0 or p_score > 1000000000
+     or (p_game = 'memory-run' and p_score < 1) then
     raise exception 'Invalid game or score.' using errcode = '22023';
   end if;
   insert into public.arcade_scores(profile_id, game_id, best)
@@ -98,7 +103,7 @@ begin
     return query
     with per_game as (
       select s.profile_id as player_id, rank() over(partition by s.game_id order by s.best desc) as place
-      from public.arcade_scores s
+      from public.arcade_scores s where s.game_id <> 'memory'
     ), totals as (
       select g.player_id, sum(greatest(0::bigint,11-g.place))::bigint as points, count(*)::bigint as game_count
       from per_game g group by g.player_id
@@ -112,7 +117,7 @@ begin
     return query
     with ranked as (
       select s.profile_id as player_id,p.username as player_name,s.best,rank() over(order by s.best desc) as place
-      from public.arcade_scores s join public.arcade_profiles p on p.id=s.profile_id where s.game_id=p_game
+      from public.arcade_scores s join public.arcade_profiles p on p.id=s.profile_id where s.game_id = case when p_game = 'memory' then 'memory-run' else p_game end
     )
     select r.player_id,r.player_name,r.best,r.place,1::bigint from ranked r
       order by r.best desc,lower(r.player_name),r.player_id limit 50;

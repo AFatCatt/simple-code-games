@@ -68,3 +68,23 @@ Use the same Supabase URL and publishable key locally and on GitHub Pages to sha
 - https://supabase.com/docs/guides/auth/managing-user-data
 - https://supabase.com/docs/guides/database/postgres/row-level-security
 - https://supabase.com/docs/guides/getting-started/api-keys
+
+## Memory Match survival update
+
+Existing projects: run the revised `01-memory-match.sql`, even if you ran the earlier version. New projects get the new score support from `setup.sql`.
+
+Memory Match shows 2, 4, 6 and eventually 16 cards for four seconds before hiding them. Match pairs without a mistake. One wrong pair ends the run. Clearing all 16 offers Continue: another full board shuffles and the same score continues. Each matched pair adds one point. Stage and picks save locally; the best run syncs online.
+
+The new rules use the `memory-run` score/save key. The public Memory Match leaderboard maps to that key. Earlier fixed-board records under `memory` are retained but excluded from current rankings and Overall. This prevents the old 1000-point scale from mixing with matched-pair totals. Other games are unchanged.
+
+## RPS room-list update
+
+Run the revised `02-rps-multiplayer.sql`, including when upgrading the earlier room-code version. It can also install multiplayer from scratch. No API key or Realtime configuration changes are required.
+
+Choose Singleplayer or Multiplayer. Multiplayer lists available rooms by host username. Host with an optional password, Join a listed room, or Join random to find a public room without a password. Each profile may occupy one active room. Old rooms retain members and scores and become public; host a new room to add a password.
+
+Passwords use pgcrypto bcrypt with a random salt and cost 10. The SQL detects the extension's installed schema. Passwords must be 4 to 64 characters and at most 72 UTF-8 bytes. Password hashes and unopposed picks are never included in room lists or snapshots. Direct room-table access is denied. Authenticated functions validate membership, lock rows, accept each pick once and compute the result. Random matching skips locked/full/expired/password-protected rooms.
+
+Room lists refresh every five seconds and active rooms every two seconds while visible. Active rooms can be resumed across devices using the same profile. Closing or leaving ends the room for both players; switching modes or closing the tab does not. Rooms expire two hours after the last game action. Expired records older than one day are cleaned when hosting. Room wins do not affect singleplayer streak rankings.
+
+New projects: run `setup.sql`, then `02-rps-multiplayer.sql`.
